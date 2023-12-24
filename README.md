@@ -5,7 +5,7 @@ ProcessDoctor aims to be a cross-platform process monitoring and control tool, l
 Implementation Status
 ---------------------
 
-Currently, nothing is implemented. We are working on a basic Windows implementation before implementing the backends for other platforms.
+So far, only a basic process list is implemented on Windows. We are considering extending it to the other operating systems soon.
 
 Documentation
 -------------
