@@ -16,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor", "ProcessDoctor\ProcessDoctor.csproj", "{6346D6A2-0AB9-40F7-A191-B1AEA6C90207}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Backend", "ProcessDoctor.Backend\ProcessDoctor.Backend.csproj", "{EDF844CB-ED8F-4335-A86D-7E4AF4195242}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +30,15 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5676A1A5-3367-4ABB-AD65-CC249C98E622} = {0DDF662D-0DEC-421D-8A9B-6F8BF79F64D5}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6346D6A2-0AB9-40F7-A191-B1AEA6C90207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6346D6A2-0AB9-40F7-A191-B1AEA6C90207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6346D6A2-0AB9-40F7-A191-B1AEA6C90207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6346D6A2-0AB9-40F7-A191-B1AEA6C90207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDF844CB-ED8F-4335-A86D-7E4AF4195242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDF844CB-ED8F-4335-A86D-7E4AF4195242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDF844CB-ED8F-4335-A86D-7E4AF4195242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDF844CB-ED8F-4335-A86D-7E4AF4195242}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
