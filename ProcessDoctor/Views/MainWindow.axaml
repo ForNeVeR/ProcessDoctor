@@ -6,11 +6,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ProcessDoctor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        d:DataContext="{x:Static vm:MainWindowViewModel.DesignInstance}"
         Title="ProcessDoctor">
-
-    <Design.DataContext>
-        <vm:MainWindowViewModel />
-    </Design.DataContext>
 
     <TreeDataGrid Source="{Binding ItemSource}" />
 

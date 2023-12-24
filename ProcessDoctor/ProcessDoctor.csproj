@@ -1,17 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
-
-    <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
-    </ItemGroup>
-
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.6"/>
@@ -23,5 +18,10 @@
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6"/>
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6"/>
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ProcessDoctor.Backend.Core\ProcessDoctor.Backend.Core.csproj" />
+      <ProjectReference Include="..\ProcessDoctor.Backend.Windows\ProcessDoctor.Backend.Windows.csproj" />
     </ItemGroup>
 </Project>

@@ -1,28 +1,31 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
+using DynamicData;
+using DynamicData.Alias;
+using DynamicData.Binding;
+using JetBrains.Diagnostics;
+using JetBrains.Lifetimes;
+using ProcessDoctor.Backend.Core;
+using ProcessDoctor.Backend.Windows;
+using ReactiveUI;
 
 namespace ProcessDoctor.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly ObservableCollection<ProcessViewModel> _processes = [];
+    public static MainWindowViewModel DesignInstance { get; } = new(
+        Lifetime.Eternal,
+        new WmiProcessMonitor(Lifetime.Eternal, Log.GetLog<WmiProcessMonitor>()));
+
     public HierarchicalTreeDataGridSource<ProcessViewModel> ItemSource { get; }
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(Lifetime lifetime, IProcessMonitor processManager)
     {
-        _processes.Add(new ProcessViewModel
-        {
-            Id = 1,
-            Name = "Process 1"
-        });
-        _processes.Add(new ProcessViewModel
-        {
-            Id = 2,
-            Name = "Process 2"
-        });
-
-        ItemSource = new(_processes)
+        var processes = ObserveProcesses(lifetime, processManager.Processes);
+        ItemSource = new(processes)
         {
             Columns =
             {
@@ -31,7 +34,21 @@ public class MainWindowViewModel : ViewModelBase
                     childSelector: _ => [] // no children for now
                 ),
                 new TextColumn<ProcessViewModel, string>("Name", x => x.Name),
+                new TextColumn<ProcessViewModel, string>("Command Line", x => x.CommandLine),
             },
         };
+    }
+
+    private static ReadOnlyObservableCollection<ProcessViewModel> ObserveProcesses(
+        Lifetime lifetime,
+        ObservableCollection<ProcessModel> models)
+    {
+        lifetime.AddDispose(
+            models.ToObservableChangeSet()
+                .Select(ProcessViewModel.Of)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(out var targetCollection)
+                .Subscribe());
+        return targetCollection;
     }
 }

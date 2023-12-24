@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="JetBrains.Lifetimes" Version="2023.3.3" />
+    </ItemGroup>
+
 </Project>
