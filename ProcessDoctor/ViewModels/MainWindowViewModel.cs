@@ -24,7 +24,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel(Lifetime lifetime, IProcessMonitor processManager)
     {
-        var processes = ObserveProcesses(lifetime, processManager.Processes);
+        var processes = ProcessTreeViewModel.ConvertToTree(lifetime, processManager.Processes);
         ItemSource = new(processes)
         {
             Columns =
@@ -37,18 +37,5 @@ public class MainWindowViewModel : ViewModelBase
                 new TextColumn<ProcessViewModel, string>("Command Line", x => x.CommandLine),
             },
         };
-    }
-
-    private static ReadOnlyObservableCollection<ProcessViewModel> ObserveProcesses(
-        Lifetime lifetime,
-        ObservableCollection<ProcessModel> models)
-    {
-        lifetime.AddDispose(
-            models.ToObservableChangeSet()
-                .Select(ProcessViewModel.Of)
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Bind(out var targetCollection)
-                .Subscribe());
-        return targetCollection;
     }
 }

@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Backend.Core"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Backend.Windows", "ProcessDoctor.Backend.Windows\ProcessDoctor.Backend.Windows.csproj", "{92311FC8-1F7B-4F4A-8BCB-3B4916DEAFCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Tests", "ProcessDoctor.Tests\ProcessDoctor.Tests.csproj", "{F45DBA78-E9A4-4C55-946C-24538B05C664}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,5 +49,9 @@ Global
 		{92311FC8-1F7B-4F4A-8BCB-3B4916DEAFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92311FC8-1F7B-4F4A-8BCB-3B4916DEAFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92311FC8-1F7B-4F4A-8BCB-3B4916DEAFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F45DBA78-E9A4-4C55-946C-24538B05C664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F45DBA78-E9A4-4C55-946C-24538B05C664}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F45DBA78-E9A4-4C55-946C-24538B05C664}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F45DBA78-E9A4-4C55-946C-24538B05C664}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
