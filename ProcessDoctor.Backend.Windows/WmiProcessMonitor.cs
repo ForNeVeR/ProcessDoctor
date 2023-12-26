@@ -35,11 +35,13 @@ public class WmiProcessMonitor : IProcessMonitor
             e =>
             {
                 var process = (ManagementBaseObject)e.NewEvent["TargetInstance"];
-                var processId = Convert.ToUInt32(process.Properties["ProcessID"].Value);
+                var processId = Convert.ToUInt32(process.Properties["ProcessId"].Value);
+                var parentProcessId = Convert.ToUInt32(process.Properties["ParentProcessId"].Value);
                 var processName = Convert.ToString(process.Properties["Name"].Value);
                 var commandLine = Convert.ToString(process.Properties["CommandLine"].Value);
                 var processModel = new ProcessModel(
                     Id: processId,
+                    ParentId: parentProcessId,
                     Name: processName ?? "<unknown>",
                     CommandLine: commandLine ?? "");
                 lock (_locker)
