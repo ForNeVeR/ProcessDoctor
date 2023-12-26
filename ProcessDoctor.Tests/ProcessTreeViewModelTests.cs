@@ -26,13 +26,13 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
 
         Assert.Collection(
             tree,
-            x => Assert.Equal(ProcessViewModel.Of(foo), x),
-            x => Assert.Equal(ProcessViewModel.Of(bar), x));
+            x => Assert.Equivalent(ProcessViewModel.Of(foo), x),
+            x => Assert.Equivalent(ProcessViewModel.Of(bar), x));
 
         models.Remove(foo);
         Assert.Collection(
             tree,
-            x => Assert.Equal(ProcessViewModel.Of(bar), x));
+            x => Assert.Equivalent(ProcessViewModel.Of(bar), x));
     }
 
     [Fact]
@@ -52,8 +52,8 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
 
         Assert.Collection(
             tree,
-            x => Assert.Equal(ProcessViewModel.Of(foo1), x),
-            x => Assert.Equal(ProcessViewModel.Of(bar), x));
+            x => Assert.Equivalent(ProcessViewModel.Of(foo1), x),
+            x => Assert.Equivalent(ProcessViewModel.Of(bar), x));
 
         models.Add(foo2);
 
@@ -61,18 +61,18 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
             tree,
             x =>
             {
-                Assert.Equal(ProcessViewModel.Of(foo1) with
+                Assert.Equivalent(ProcessViewModel.Of(foo1) with
                 {
                     Children = ImmutableArray.Create(ProcessViewModel.Of(foo2))
-                }, x);
-                Assert.Equal(ProcessViewModel.Of(foo2), Assert.Single(x.Children));
+                }, x, strict: true);
+                Assert.Equivalent(ProcessViewModel.Of(foo2), Assert.Single(x.Children));
             },
-            x => Assert.Equal(x, ProcessViewModel.Of(bar)));
+            x => Assert.Equivalent(x, ProcessViewModel.Of(bar)));
 
         models.Remove(foo1);
         Assert.Collection(
             tree,
-            x => Assert.Equal(ProcessViewModel.Of(bar), x),
-            x => Assert.Equal(ProcessViewModel.Of(foo2), x));
+            x => Assert.Equivalent(ProcessViewModel.Of(bar), x),
+            x => Assert.Equivalent(ProcessViewModel.Of(foo2), x));
     }
 }
