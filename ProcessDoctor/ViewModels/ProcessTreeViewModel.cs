@@ -12,7 +12,7 @@ using ReactiveUI;
 
 namespace ProcessDoctor.ViewModels;
 
-// TODO: optimize all IndexOf/RemoveAt/linear Remove calls in this class, perhaps by removing them
+// TODO[#5]: optimize all IndexOf/RemoveAt/linear Remove calls in this class, perhaps by removing them
 public class ProcessTreeViewModel
 {
     private readonly ILog _logger;
@@ -74,7 +74,7 @@ public class ProcessTreeViewModel
                            ?? Array.Empty<ProcessViewModel>();
             foreach (var child in children)
             {
-                // TODO: Optimize
+                // TODO[#5]: Optimize
                 _viewModels.RemoveAt(_viewModels.IndexOf(child));
             }
             _orphanedModels.Remove(process.Id);

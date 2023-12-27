@@ -18,7 +18,7 @@ public class WmiProcessMonitor : IProcessMonitor
             "select * from __InstanceDeletionEvent within 1 where TargetInstance isa 'Win32_Process'",
             e =>
             {
-                // TODO: Optimize this
+                // TODO[#5]: Optimize this
                 var process = (ManagementBaseObject)e.NewEvent["TargetInstance"];
                 var processId = Convert.ToUInt32(process.Properties["ProcessID"].Value);
                 lock (_locker)
