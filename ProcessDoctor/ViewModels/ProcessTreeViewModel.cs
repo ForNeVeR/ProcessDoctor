@@ -20,7 +20,7 @@ public class ProcessTreeViewModel
     private readonly ObservableCollection<ProcessViewModel> _viewModels = [];
     public ReadOnlyObservableCollection<ProcessViewModel> Processes { get; }
 
-    // TODO: Deal with temporary duplicates having same id
+    // TODO[#14]: Deal with temporary duplicates having same id
     private readonly Dictionary<uint, ProcessViewModel> _allProcesses = new();
     // parent id => child list
     private readonly Dictionary<uint, List<ProcessViewModel>> _orphanedModels = new();
