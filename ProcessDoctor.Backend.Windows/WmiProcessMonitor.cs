@@ -59,6 +59,7 @@ public class WmiProcessMonitor : IProcessMonitor
             () => watcher.EventArrived -= OnWatcherOnEventArrived);
 
         watcher.Start();
+        return;
 
         void OnWatcherOnEventArrived(object _, EventArrivedEventArgs e)
         {
@@ -67,7 +68,5 @@ public class WmiProcessMonitor : IProcessMonitor
                 handler(e);
             });
         }
-
-        watcher.Start();
     }
 }
