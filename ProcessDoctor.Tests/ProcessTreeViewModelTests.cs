@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
@@ -45,7 +44,8 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
 
         ProcessModel foo1 = new(1u, null, "foo1", "foo1 1");
         ProcessModel foo2 = new(2u, foo1.Id, "foo2", "foo2 2");
-        ProcessModel bar = new(3u, null, "bar", "bar 3");
+        ProcessModel foo3 = new(3u, foo2.Id, "foo3", "foo3 3");
+        ProcessModel bar = new(4u, null, "bar", "bar 3");
 
         models.Add(foo1);
         models.Add(bar);
@@ -63,9 +63,8 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
             {
                 Assert.Equivalent(ProcessViewModel.Of(foo1) with
                 {
-                    Children = ImmutableArray.Create(ProcessViewModel.Of(foo2))
+                    Children = [ProcessViewModel.Of(foo2)]
                 }, x, strict: true);
-                Assert.Equivalent(ProcessViewModel.Of(foo2), Assert.Single(x.Children));
             },
             x => Assert.Equivalent(x, ProcessViewModel.Of(bar)));
 
@@ -74,5 +73,22 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
             tree,
             x => Assert.Equivalent(ProcessViewModel.Of(bar), x),
             x => Assert.Equivalent(ProcessViewModel.Of(foo2), x));
+
+        models.Add(foo3);
+        models.Add(foo1);
+
+        Assert.Collection(
+            tree,
+            x => Assert.Equivalent(x, ProcessViewModel.Of(bar)),
+            x =>
+            {
+                Assert.Equivalent(ProcessViewModel.Of(foo1) with
+                {
+                    Children = [ProcessViewModel.Of(foo2) with
+                    {
+                        Children = [ProcessViewModel.Of(foo3)]
+                    }]
+                }, x, strict: true);
+            });
     }
 }

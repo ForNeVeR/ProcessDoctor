@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -13,6 +12,7 @@ using ReactiveUI;
 
 namespace ProcessDoctor.ViewModels;
 
+// TODO: optimize all IndexOf/RemoveAt/linear Remove calls in this class, perhaps by removing them
 public class ProcessTreeViewModel
 {
     private readonly ILog _logger;
@@ -77,10 +77,9 @@ public class ProcessTreeViewModel
                 // TODO: Optimize
                 _viewModels.RemoveAt(_viewModels.IndexOf(child));
             }
-            var viewModel = ProcessViewModel.Of(process) with
-            {
-                Children = children.ToImmutableArray()
-            };
+            _orphanedModels.Remove(process.Id);
+            var viewModel = ProcessViewModel.Of(process);
+            viewModel.Children.AddRange(children);
             _allProcesses.Add(process.Id, viewModel);
 
             if (process.ParentId is null)
@@ -105,10 +104,7 @@ public class ProcessTreeViewModel
             }
             else
             {
-                _viewModels[_viewModels.IndexOf(parent)] = _allProcesses[parentId] = parent with
-                {
-                    Children = parent.Children.Add(viewModel)
-                };
+                parent.Children.Add(viewModel);
             }
         }
     }
@@ -123,7 +119,7 @@ public class ProcessTreeViewModel
             _allProcesses.Remove(process.Id);
 
             // 2. Process' children are now orphans.
-            if (viewModel.Children.Length > 0)
+            if (viewModel.Children.Count > 0)
             {
                 if (_orphanedModels.Remove(process.Id))
                     _logger.Error($"Orphaned list not empty for process {process.Id}.");
@@ -142,10 +138,7 @@ public class ProcessTreeViewModel
                 if (parent is not null)
                 {
                     // Process has a real parent: remove from the parent's children.
-                    _allProcesses[parentId] = _viewModels[_viewModels.IndexOf(parent)] = parent with
-                    {
-                        Children = parent.Children.Remove(viewModel)
-                    };
+                    parent.Children.Remove(viewModel);
 
                     // As process cannot be an orphan or be in the root collection, terminate here.
                     continue;
