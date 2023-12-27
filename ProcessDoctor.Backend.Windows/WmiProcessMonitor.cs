@@ -38,10 +38,14 @@ public class WmiProcessMonitor : IProcessMonitor
                 var processId = Convert.ToUInt32(process.Properties["ProcessID"].Value);
                 var processName = Convert.ToString(process.Properties["Name"].Value);
                 var commandLine = Convert.ToString(process.Properties["CommandLine"].Value);
+                var executablePath = Convert.ToString(process.Properties["ExecutablePath"].Value);
+
                 var processModel = new ProcessModel(
                     Id: processId,
                     Name: processName ?? "<unknown>",
-                    CommandLine: commandLine ?? "");
+                    CommandLine: commandLine ?? string.Empty,
+                    ExecutablePath: executablePath);
+
                 lock (_locker)
                     Processes.Add(processModel);
             });

@@ -3,5 +3,6 @@
 public record ProcessModel(
     uint Id,
     string Name,
-    string CommandLine
+    string CommandLine,
+    string? ExecutablePath
 );
