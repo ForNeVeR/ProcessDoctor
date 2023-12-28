@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System.Reactive.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
 using Avalonia.Media;
@@ -6,6 +7,7 @@ using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
 using ProcessDoctor.Backend.Windows;
+using ReactiveUI;
 using Image = Avalonia.Controls.Image;
 
 namespace ProcessDoctor.ViewModels;
@@ -35,19 +37,32 @@ public class MainWindowViewModel : ViewModelBase
                 new TextColumn<ProcessViewModel, string>("Command Line", x => x.CommandLine),
             },
         };
+    }
 
-        return;
+    private static TemplateColumn<ProcessViewModel> BuildImageColumn()
+    {
+        return new TemplateColumn<ProcessViewModel>(
+            header: string.Empty,
+            cellTemplate: new FuncDataTemplate<ProcessViewModel?>((viewModel, _) =>
+                BuildImageControl(viewModel)));
 
-        TemplateColumn<ProcessViewModel> BuildImageColumn()
+        static Image BuildImageControl(ProcessViewModel? viewModel)
         {
-            var template = new FuncDataTemplate<ProcessViewModel?>(
-                (viewModel, _) => new Image
-                {
-                    Source = viewModel?.Image,
-                    Stretch = Stretch.Fill
-                });
+            var image = new Image
+            {
+                Stretch = Stretch.Fill
+            };
 
-            return new TemplateColumn<ProcessViewModel>(string.Empty, template);
+            if (viewModel is null)
+            {
+                return image;
+            }
+
+            image.Bind(
+                Image.SourceProperty,
+                viewModel.Image.ToObservable(RxApp.TaskpoolScheduler));
+
+            return image;
         }
     }
 }
