@@ -25,7 +25,7 @@ public partial class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(lifetime, backend)
+                DataContext = new MainWindowViewModel(lifetime, Log.GetLog<MainWindowViewModel>(), backend)
             };
         }
 

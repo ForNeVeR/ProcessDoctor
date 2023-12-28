@@ -1,5 +1,5 @@
-﻿using ProcessDoctor.Backend.Core;
-using ProcessDoctor.Imaging;
+using System.Collections.ObjectModel;
+using ProcessDoctor.Backend.Core;
 using ProcessDoctor.Imaging.Extensions;
 using Bitmap = Avalonia.Media.Imaging.Bitmap;
 
@@ -9,12 +9,13 @@ public record ProcessViewModel(
     uint Id,
     string Name,
     string CommandLine,
-    Bitmap? Image)
+    Bitmap? Image,
+    ObservableCollection<ProcessViewModel> Children)
 {
-    public static ProcessViewModel Of(ProcessModel model)
-        => new(
-            model.Id,
-            model.Name,
-            model.CommandLine,
-            model.ExtractAssociatedBitmap().ToAvaloniaBitmap());
+    public static ProcessViewModel Of(ProcessModel model) => new(
+        model.Id,
+        model.Name,
+        model.CommandLine,
+        model.ExtractAssociatedBitmap().ToAvaloniaBitmap(),
+        []);
 }

@@ -18,7 +18,7 @@ public class WmiProcessMonitor : IProcessMonitor
             "select * from __InstanceDeletionEvent within 1 where TargetInstance isa 'Win32_Process'",
             e =>
             {
-                // TODO: Optimize this
+                // TODO[#5]: Optimize this
                 var process = (ManagementBaseObject)e.NewEvent["TargetInstance"];
                 var processId = Convert.ToUInt32(process.Properties["ProcessID"].Value);
                 lock (_locker)
@@ -35,13 +35,15 @@ public class WmiProcessMonitor : IProcessMonitor
             e =>
             {
                 var process = (ManagementBaseObject)e.NewEvent["TargetInstance"];
-                var processId = Convert.ToUInt32(process.Properties["ProcessID"].Value);
+                var processId = Convert.ToUInt32(process.Properties["ProcessId"].Value);
+                var parentProcessId = Convert.ToUInt32(process.Properties["ParentProcessId"].Value);
                 var processName = Convert.ToString(process.Properties["Name"].Value);
                 var commandLine = Convert.ToString(process.Properties["CommandLine"].Value);
                 var executablePath = Convert.ToString(process.Properties["ExecutablePath"].Value);
 
                 var processModel = new ProcessModel(
                     Id: processId,
+                    ParentId: parentProcessId,
                     Name: processName ?? "<unknown>",
                     CommandLine: commandLine ?? string.Empty,
                     ExecutablePath: executablePath);
@@ -61,6 +63,7 @@ public class WmiProcessMonitor : IProcessMonitor
             () => watcher.EventArrived -= OnWatcherOnEventArrived);
 
         watcher.Start();
+        return;
 
         void OnWatcherOnEventArrived(object _, EventArrivedEventArgs e)
         {
@@ -69,7 +72,5 @@ public class WmiProcessMonitor : IProcessMonitor
                 handler(e);
             });
         }
-
-        watcher.Start();
     }
 }
