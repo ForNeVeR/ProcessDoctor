@@ -9,7 +9,7 @@ namespace ProcessDoctor.Imaging.Extensions;
 
 public static class ProcessModelExtensions
 {
-    public static Task<Bitmap?> ExtractAssociatedBitmapAsync(this ProcessModel process)
+    public static Task<Bitmap?> ExtractAssociatedBitmapAsync(this SystemProcess process)
     {
         if (string.IsNullOrWhiteSpace(process.ExecutablePath))
         {

@@ -13,7 +13,7 @@ public record ProcessViewModel(
     Task<Bitmap?> Image,
     ObservableCollection<ProcessViewModel> Children)
 {
-    public static ProcessViewModel Of(ProcessModel model) => new(
+    public static ProcessViewModel Of(SystemProcess model) => new(
         model.Id,
         model.Name,
         model.CommandLine,

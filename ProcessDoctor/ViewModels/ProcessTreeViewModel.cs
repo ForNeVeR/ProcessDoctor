@@ -28,7 +28,7 @@ public class ProcessTreeViewModel
     public ProcessTreeViewModel(
         ILog logger,
         Lifetime lifetime,
-        ObservableCollection<ProcessModel> models)
+        ObservableCollection<SystemProcess> models)
     {
         _logger = logger;
         var scheduler = RxApp.MainThreadScheduler;
@@ -47,8 +47,8 @@ public class ProcessTreeViewModel
             {
                 Action? action = e.Action switch
                 {
-                    NotifyCollectionChangedAction.Add => () => OnAdd(e.NewItems!.Cast<ProcessModel>()),
-                    NotifyCollectionChangedAction.Remove => () => OnRemove(e.OldItems!.Cast<ProcessModel>()),
+                    NotifyCollectionChangedAction.Add => () => OnAdd(e.NewItems!.Cast<SystemProcess>()),
+                    NotifyCollectionChangedAction.Remove => () => OnRemove(e.OldItems!.Cast<SystemProcess>()),
                     NotifyCollectionChangedAction.Reset => () => OnReset(models.ToList()),
                     NotifyCollectionChangedAction.Replace => null,
                     NotifyCollectionChangedAction.Move => null,
@@ -60,13 +60,13 @@ public class ProcessTreeViewModel
         }
     }
 
-    private void OnReset(List<ProcessModel> processes)
+    private void OnReset(List<SystemProcess> processes)
     {
         _viewModels.Clear();
         OnAdd(processes);
     }
 
-    private void OnAdd(IEnumerable<ProcessModel> processes)
+    private void OnAdd(IEnumerable<SystemProcess> processes)
     {
         foreach (var process in processes)
         {
@@ -109,7 +109,7 @@ public class ProcessTreeViewModel
         }
     }
 
-    private void OnRemove(IEnumerable<ProcessModel> processes)
+    private void OnRemove(IEnumerable<SystemProcess> processes)
     {
         foreach (var process in processes)
         {
