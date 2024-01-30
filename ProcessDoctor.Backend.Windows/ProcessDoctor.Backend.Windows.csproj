@@ -4,6 +4,7 @@
         <TargetFramework>net8.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,6 +13,10 @@
 
     <ItemGroup>
       <PackageReference Include="System.Management" Version="8.0.0" />
+
+      <!-- PInvoke is no longer maintained. We should use https://github.com/microsoft/CsWin32 when stable version is released -->
+      <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
+      <PackageReference Include="PInvoke.NTDll" Version="0.7.124" />
     </ItemGroup>
 
 </Project>
