@@ -9,10 +9,20 @@ namespace ProcessDoctor.Backend.Windows;
 public class WmiProcessMonitor : IProcessMonitor
 {
     private readonly object _locker = new();
-    public ObservableCollection<ProcessModel> Processes { get; } = [];
+    public ObservableCollection<SystemProcess> Processes { get; } = [];
 
     public WmiProcessMonitor(Lifetime lifetime, ILog logger)
     {
+        using var snapshot = ProcessesSnapshot.Create();
+
+        foreach (var process in snapshot.EnumerateProcesses())
+        {
+            lock (_locker)
+            {
+                Processes.Add(process);
+            }
+        }
+
         WatchEvents(lifetime,
             logger,
             "select * from __InstanceDeletionEvent within 1 where TargetInstance isa 'Win32_Process'",
@@ -34,19 +44,7 @@ public class WmiProcessMonitor : IProcessMonitor
             "select * from __InstanceCreationEvent within 1 where TargetInstance isa 'Win32_Process'",
             e =>
             {
-                var process = (ManagementBaseObject)e.NewEvent["TargetInstance"];
-                var processId = Convert.ToUInt32(process.Properties["ProcessId"].Value);
-                var parentProcessId = Convert.ToUInt32(process.Properties["ParentProcessId"].Value);
-                var processName = Convert.ToString(process.Properties["Name"].Value);
-                var commandLine = Convert.ToString(process.Properties["CommandLine"].Value);
-                var executablePath = Convert.ToString(process.Properties["ExecutablePath"].Value);
-
-                var processModel = new ProcessModel(
-                    Id: processId,
-                    ParentId: parentProcessId,
-                    Name: processName ?? "<unknown>",
-                    CommandLine: commandLine ?? string.Empty,
-                    ExecutablePath: executablePath);
+                var processModel = WindowsProcess.Create((ManagementBaseObject)e.NewEvent["TargetInstance"]);
 
                 lock (_locker)
                     Processes.Add(processModel);
