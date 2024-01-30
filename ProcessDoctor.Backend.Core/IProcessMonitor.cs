@@ -4,5 +4,5 @@ namespace ProcessDoctor.Backend.Core;
 
 public interface IProcessMonitor
 {
-    ObservableCollection<ProcessModel> Processes { get; }
+    ObservableCollection<SystemProcess> Processes { get; }
 }

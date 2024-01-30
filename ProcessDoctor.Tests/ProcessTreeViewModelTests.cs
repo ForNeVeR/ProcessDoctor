@@ -14,11 +14,11 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
     {
         using var logger = new ThrowingLoggerAdapter(nameof(ProcessTreeViewModelTests), output);
         using var ld = new LifetimeDefinition();
-        var models = new ObservableCollection<ProcessModel>();
+        var models = new ObservableCollection<SystemProcess>();
         var tree = new ProcessTreeViewModel(logger, ld.Lifetime, models).Processes;
 
-        ProcessModel foo = new(1u, null, "foo", "foo 1", null);
-        ProcessModel bar = new(2u, null, "bar", "bar 2", null);
+        FakeProcess foo = new(1u, null, "foo", "foo 1", null);
+        FakeProcess bar = new(2u, null, "bar", "bar 2", null);
 
         models.Add(foo);
         models.Add(bar);
@@ -39,13 +39,13 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
     {
         using var logger = new ThrowingLoggerAdapter(nameof(ProcessTreeViewModelTests), output);
         using var ld = new LifetimeDefinition();
-        var models = new ObservableCollection<ProcessModel>();
+        var models = new ObservableCollection<SystemProcess>();
         var tree = new ProcessTreeViewModel(logger, ld.Lifetime, models).Processes;
 
-        ProcessModel foo1 = new(1u, null, "foo1", "foo1 1", null);
-        ProcessModel foo2 = new(2u, foo1.Id, "foo2", "foo2 2", null);
-        ProcessModel foo3 = new(3u, foo2.Id, "foo3", "foo3 3", null);
-        ProcessModel bar = new(4u, null, "bar", "bar 3", null);
+        FakeProcess foo1 = new(1u, null, "foo1", "foo1 1", null);
+        FakeProcess foo2 = new(2u, foo1.Id, "foo2", "foo2 2", null);
+        FakeProcess foo3 = new(3u, foo2.Id, "foo3", "foo3 3", null);
+        FakeProcess bar = new(4u, null, "bar", "bar 3", null);
 
         models.Add(foo1);
         models.Add(bar);
