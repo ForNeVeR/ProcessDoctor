@@ -17,10 +17,7 @@ public class WmiProcessMonitor : IProcessMonitor
 
         foreach (var process in snapshot.EnumerateProcesses())
         {
-            lock (_locker)
-            {
-                Processes.Add(process);
-            }
+            Processes.Add(process);
         }
 
         WatchEvents(lifetime,
@@ -31,6 +28,7 @@ public class WmiProcessMonitor : IProcessMonitor
                 // TODO[#5]: Optimize this
                 var process = (ManagementBaseObject)e.NewEvent["TargetInstance"];
                 var processId = Convert.ToUInt32(process.Properties["ProcessID"].Value);
+
                 lock (_locker)
                 {
                     var processModel = Processes.FirstOrDefault(x => x.Id == processId);
@@ -38,6 +36,7 @@ public class WmiProcessMonitor : IProcessMonitor
                         Processes.Remove(processModel);
                 }
             });
+
         WatchEvents(
             lifetime,
             logger,
