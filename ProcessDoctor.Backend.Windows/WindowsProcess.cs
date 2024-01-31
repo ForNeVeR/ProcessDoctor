@@ -17,7 +17,7 @@ internal sealed record WindowsProcess : SystemProcess
 
         return new WindowsProcess(
             id: processId,
-            parentId,
+            parentId: processId != parentId ? parentId : null,
             name: processName ?? "<unknown>",
             commandLine: commandLine ?? string.Empty,
             executablePath: executablePath);
@@ -25,34 +25,40 @@ internal sealed record WindowsProcess : SystemProcess
 
     public static WindowsProcess Create(Kernel32.PROCESSENTRY32 processEntry)
     {
+        var processId = processEntry.th32ProcessID;
+        var parentId = Convert.ToUInt32(processEntry.th32ParentProcessID);
+
         using var processHandle = Kernel32.OpenProcess(
             Kernel32.ProcessAccess.PROCESS_VM_READ | Kernel32.ProcessAccess.PROCESS_QUERY_INFORMATION,
             bInheritHandle: false,
-            processEntry.th32ProcessID);
+            processId);
 
-        if (processHandle is null || processHandle.IsInvalid)
+        if (processHandle is not null && !processHandle.IsInvalid)
         {
-            return new WindowsProcess(
-                id: (uint)processEntry.th32ProcessID,
-                parentId: (uint)processEntry.th32ParentProcessID,
-                name: processEntry.ExeFile,
-                commandLine: string.Empty,
-                executablePath: null);
+            return Create(processEntry, processHandle);
         }
 
-        return Create(processEntry, processHandle);
+        return new WindowsProcess(
+            id: Convert.ToUInt32(processId),
+            parentId: processId != parentId ? parentId : null,
+            name: processEntry.ExeFile,
+            commandLine: string.Empty,
+            executablePath: null);
     }
 
     private static WindowsProcess Create(Kernel32.PROCESSENTRY32 processEntry, Kernel32.SafeObjectHandle processHandle)
     {
+        var processId = Convert.ToUInt32(processEntry.th32ProcessID);
+        var parentId = Convert.ToUInt32(processEntry.th32ParentProcessID);
+
         var memoryReader = new ProcessMemoryReader(processHandle);
         var basicInformation = processHandle.GetBasicInformation();
         var peb = basicInformation.ReadPeb(memoryReader);
         var parameters = peb.ReadParameters(memoryReader);
 
         return new WindowsProcess(
-            id: (uint)processEntry.th32ProcessID,
-            parentId: (uint)processEntry.th32ParentProcessID,
+            id: processId,
+            parentId: processId != parentId ? parentId : null,
             name: processEntry.ExeFile,
             commandLine: parameters.CommandLine.ToManagedString(memoryReader) ?? string.Empty,
             executablePath: parameters.ImagePathName.ToManagedString(memoryReader));
