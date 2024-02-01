@@ -66,7 +66,7 @@ public class MainWindowViewModel : ViewModelBase
                 [
                     new ColumnDefinition(GridLength.Auto),
                     new ColumnDefinition(5.0, GridUnitType.Pixel),
-                    new ColumnDefinition(GridLength.Auto)
+                    new ColumnDefinition(GridLength.Star)
                 ]
             };
 
@@ -81,6 +81,7 @@ public class MainWindowViewModel : ViewModelBase
                 new TextBlock
                 {
                     Text = viewModel.Name,
+                    TextTrimming = TextTrimming.CharacterEllipsis,
                     [Grid.ColumnProperty] = 2
                 }
             };
