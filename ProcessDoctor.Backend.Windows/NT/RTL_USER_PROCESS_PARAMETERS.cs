@@ -8,7 +8,7 @@ public unsafe struct RTL_USER_PROCESS_PARAMETERS
 {
     private fixed byte Reserved1[16];
 
-    private fixed int Reserved2[20];
+    private fixed long Reserved2[10];
 
     /// <summary>The path of the image file for the process.</summary>
     public NTDll.UNICODE_STRING ImagePathName;
