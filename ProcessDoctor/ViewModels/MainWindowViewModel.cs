@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
+using Avalonia.Layout;
 using Avalonia.Media;
 using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
@@ -29,28 +30,73 @@ public class MainWindowViewModel : ViewModelBase
             Columns =
             {
                 new HierarchicalExpanderColumn<ProcessViewModel>(
-                    new TextColumn<ProcessViewModel, uint>("Id", x => x.Id),
+                    BuildNameColumn(),
                     childSelector: p => p.Children
                 ),
-                BuildImageColumn(),
-                new TextColumn<ProcessViewModel, string>("Name", x => x.Name),
+                new TextColumn<ProcessViewModel, uint>("PID", x => x.Id),
                 new TextColumn<ProcessViewModel, string>("Command Line", x => x.CommandLine),
             },
         };
     }
 
-    private static TemplateColumn<ProcessViewModel> BuildImageColumn()
+    private static TemplateColumn<ProcessViewModel> BuildNameColumn()
     {
-        return new TemplateColumn<ProcessViewModel>(
-            header: string.Empty,
-            cellTemplate: new FuncDataTemplate<ProcessViewModel?>((viewModel, _) =>
-                BuildImageControl(viewModel)));
+        var cellTemplate = new FuncDataTemplate<ProcessViewModel?>((viewModel, _) =>
+            BuildNameControl(viewModel));
+
+        var options = new TemplateColumnOptions<ProcessViewModel>()
+        {
+            CompareAscending = (p1, p2) => p1.Name.CompareTo(p2.Name),
+            CompareDescending = (p1, p2) => p2.Name.CompareTo(p1.Name)
+        };
+
+        return new TemplateColumn<ProcessViewModel?>(
+            header: "Name",
+            cellTemplate: cellTemplate,
+            options: options);
+
+        static Grid BuildNameControl(ProcessViewModel? viewModel)
+        {
+            var grid = new Grid
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                ColumnDefinitions = new ColumnDefinitions()
+                {
+                    new ColumnDefinition(GridLength.Auto),
+                    new ColumnDefinition(5.0, GridUnitType.Pixel),
+                    new ColumnDefinition(GridLength.Auto),
+                }
+            };
+
+            if (viewModel is null)
+            {
+                return grid;
+            }
+
+            var controls = new Control[]
+            {
+                BuildImageControl(viewModel),
+                new TextBlock
+                {
+                    Text = viewModel.Name,
+                    [Grid.ColumnProperty] = 2
+                }
+            };
+
+            grid.Children.AddRange(controls);
+
+            return grid;
+        }
 
         static Image BuildImageControl(ProcessViewModel? viewModel)
         {
             var image = new Image
             {
-                Stretch = Stretch.Fill
+                Width = 16.0,
+                Height = 16.0,
+                Stretch = Stretch.Fill,
+                [Grid.ColumnProperty] = 0
             };
 
             if (viewModel is null)
