@@ -39,15 +39,15 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
-    private static TemplateColumn<ProcessViewModel> BuildNameColumn()
+    private static TemplateColumn<ProcessViewModel?> BuildNameColumn()
     {
         var cellTemplate = new FuncDataTemplate<ProcessViewModel?>((viewModel, _) =>
             BuildNameControl(viewModel));
 
-        var options = new TemplateColumnOptions<ProcessViewModel>()
+        var options = new TemplateColumnOptions<ProcessViewModel?>()
         {
-            CompareAscending = (p1, p2) => p1.Name.CompareTo(p2.Name),
-            CompareDescending = (p1, p2) => p2.Name.CompareTo(p1.Name)
+            CompareAscending = (p1, p2) => p1?.Name.CompareTo(p2?.Name),
+            CompareDescending = (p1, p2) => p2?.Name.CompareTo(p1?.Name)
         };
 
         return new TemplateColumn<ProcessViewModel?>(
