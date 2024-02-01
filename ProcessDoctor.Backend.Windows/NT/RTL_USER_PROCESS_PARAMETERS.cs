@@ -4,15 +4,11 @@ using PInvoke;
 namespace ProcessDoctor.Backend.Windows.NT;
 
 [StructLayout(LayoutKind.Sequential)]
-public struct RTL_USER_PROCESS_PARAMETERS
+public unsafe struct RTL_USER_PROCESS_PARAMETERS
 {
-    /// <summary>Reserved for internal use by the operating system.</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-    private readonly byte[] Reserved1;
+    private fixed byte Reserved1[16];
 
-    /// <summary>Reserved for internal use by the operating system.</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    private readonly IntPtr[] Reserved2;
+    private fixed int Reserved2[20];
 
     /// <summary>The path of the image file for the process.</summary>
     public NTDll.UNICODE_STRING ImagePathName;

@@ -1,6 +1,7 @@
 using System.Management;
 using PInvoke;
 using ProcessDoctor.Backend.Core;
+using ProcessDoctor.Backend.Windows.NT;
 using ProcessDoctor.Backend.Windows.NT.Extensions;
 
 namespace ProcessDoctor.Backend.Windows;
@@ -46,22 +47,21 @@ internal sealed record WindowsProcess : SystemProcess
             executablePath: null);
     }
 
-    private static WindowsProcess Create(Kernel32.PROCESSENTRY32 processEntry, Kernel32.SafeObjectHandle processHandle)
+    private static unsafe WindowsProcess Create(Kernel32.PROCESSENTRY32 processEntry, Kernel32.SafeObjectHandle processHandle)
     {
         var processId = Convert.ToUInt32(processEntry.th32ProcessID);
         var parentId = Convert.ToUInt32(processEntry.th32ParentProcessID);
 
-        var memoryReader = new ProcessMemoryReader(processHandle);
         var basicInformation = processHandle.GetBasicInformation();
-        var peb = basicInformation.ReadPeb(memoryReader);
-        var parameters = peb.ReadParameters(memoryReader);
+        var peb = processHandle.ReadStructure<PEB_64>(basicInformation.PebBaseAddress);
+        var parameters = processHandle.ReadStructure<RTL_USER_PROCESS_PARAMETERS>(peb.ProcessParameters);
 
         return new WindowsProcess(
             id: processId,
             parentId: processId != parentId ? parentId : null,
             name: processEntry.ExeFile,
-            commandLine: parameters.CommandLine.ToManagedString(memoryReader) ?? string.Empty,
-            executablePath: parameters.ImagePathName.ToManagedString(memoryReader));
+            commandLine: parameters.CommandLine.ToManagedString(processHandle) ?? string.Empty,
+            executablePath: parameters.ImagePathName.ToManagedString(processHandle));
     }
 
     /// <inheritdoc />
