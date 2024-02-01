@@ -1,4 +1,5 @@
-﻿using System.Reactive.Threading.Tasks;
+﻿using System;
+using System.Reactive.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
@@ -39,18 +40,18 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
-    private static TemplateColumn<ProcessViewModel?> BuildNameColumn()
+    private static TemplateColumn<ProcessViewModel> BuildNameColumn()
     {
         var cellTemplate = new FuncDataTemplate<ProcessViewModel?>((viewModel, _) =>
             BuildNameControl(viewModel));
 
-        var options = new TemplateColumnOptions<ProcessViewModel?>()
+        var options = new TemplateColumnOptions<ProcessViewModel>
         {
-            CompareAscending = (p1, p2) => p1?.Name.CompareTo(p2?.Name),
-            CompareDescending = (p1, p2) => p2?.Name.CompareTo(p1?.Name)
+            CompareAscending = (p1, p2) => string.Compare(p1?.Name, p2?.Name, StringComparison.Ordinal),
+            CompareDescending = (p1, p2) => string.Compare(p2?.Name, p1?.Name, StringComparison.Ordinal)
         };
 
-        return new TemplateColumn<ProcessViewModel?>(
+        return new TemplateColumn<ProcessViewModel>(
             header: "Name",
             cellTemplate: cellTemplate,
             options: options);
@@ -61,12 +62,12 @@ public class MainWindowViewModel : ViewModelBase
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
-                ColumnDefinitions = new ColumnDefinitions()
-                {
+                ColumnDefinitions =
+                [
                     new ColumnDefinition(GridLength.Auto),
                     new ColumnDefinition(5.0, GridUnitType.Pixel),
-                    new ColumnDefinition(GridLength.Auto),
-                }
+                    new ColumnDefinition(GridLength.Auto)
+                ]
             };
 
             if (viewModel is null)
