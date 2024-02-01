@@ -47,8 +47,8 @@ public class MainWindowViewModel : ViewModelBase
 
         var options = new TemplateColumnOptions<ProcessViewModel>
         {
-            CompareAscending = (p1, p2) => string.Compare(p1?.Name, p2?.Name, StringComparison.Ordinal),
-            CompareDescending = (p1, p2) => string.Compare(p2?.Name, p1?.Name, StringComparison.Ordinal)
+            CompareAscending = (left, right) => string.Compare(left?.Name, right?.Name, StringComparison.Ordinal),
+            CompareDescending = (left, right) => string.Compare(right?.Name, left?.Name, StringComparison.Ordinal)
         };
 
         return new TemplateColumn<ProcessViewModel>(
