@@ -3,27 +3,23 @@ using System.Runtime.InteropServices;
 namespace ProcessDoctor.Backend.Windows.NT;
 
 [StructLayout(LayoutKind.Sequential)]
-public struct PEB_64
+public unsafe struct PEB_64
 {
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-    public byte[] Reserved1;
+    public fixed byte Reserved1[2];
 
     public byte BeingDebugged;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)]
-    public byte[] Reserved2;
+    public fixed byte Reserved2[21];
 
     public IntPtr LoaderData;
 
     public IntPtr ProcessParameters;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 520)]
-    public byte[] Reserved3;
+    public fixed byte Reserved3[520];
 
     public IntPtr PostProcessInitRoutine;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 136)]
-    public byte[] Reserved4;
+    public fixed byte Reserved4[136];
 
     public uint SessionId;
 }

@@ -25,4 +25,40 @@ internal static class ProcessHandleExtensions
 
         return basicInformation;
     }
+
+    internal static T ReadStructure<T>(this Kernel32.SafeObjectHandle processHandle, IntPtr address)
+        where T : unmanaged
+    {
+        var instance = default(T);
+        var span = MemoryMarshal.CreateSpan(ref instance, length: 1);
+        var buffer = MemoryMarshal.AsBytes(span);
+
+        if (!processHandle.TryReadMemory(address, buffer))
+        {
+            throw new CorruptedProcessHandleException();
+        }
+
+        return instance;
+    }
+
+    internal static unsafe T ReadStructure<T>(this Kernel32.SafeObjectHandle processHandle, void* address)
+        where T : unmanaged
+        => processHandle.ReadStructure<T>(new IntPtr(address));
+
+    private static unsafe bool TryReadMemory(this Kernel32.SafeObjectHandle processHandle, IntPtr address, Span<byte> buffer)
+    {
+        var length = (nuint)buffer.Length;
+
+        fixed (byte* pointer = buffer)
+        {
+            var isSuccess = Kernel32.ReadProcessMemory(
+                processHandle,
+                address,
+                (IntPtr)pointer,
+                length,
+                out var totalLength);
+
+            return isSuccess && length == totalLength;
+        }
+    }
 }
