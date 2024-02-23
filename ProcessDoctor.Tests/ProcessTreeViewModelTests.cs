@@ -16,7 +16,8 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
         using var logger = new ThrowingLoggerAdapter(nameof(ProcessTreeViewModelTests), output);
         using var ld = new LifetimeDefinition();
         var models = new ObservableCollection<SystemProcess>();
-        var tree = new ProcessTreeViewModel(logger, ld.Lifetime, models).Processes;
+        using var processMonitor = new ObservableCollectionProcessMonitor(models);
+        var tree = new ProcessTreeViewModel(logger, ld.Lifetime, processMonitor).Processes;
 
         FakeProcess foo = new(1u, null, "foo", "foo 1", null);
         FakeProcess bar = new(2u, null, "bar", "bar 2", null);
@@ -41,7 +42,8 @@ public class ProcessTreeViewModelTests(ITestOutputHelper output)
         using var logger = new ThrowingLoggerAdapter(nameof(ProcessTreeViewModelTests), output);
         using var ld = new LifetimeDefinition();
         var models = new ObservableCollection<SystemProcess>();
-        var tree = new ProcessTreeViewModel(logger, ld.Lifetime, models).Processes;
+        using var processMonitor = new ObservableCollectionProcessMonitor(models);
+        var tree = new ProcessTreeViewModel(logger, ld.Lifetime, processMonitor).Processes;
 
         FakeProcess foo1 = new(1u, null, "foo1", "foo1 1", null);
         FakeProcess foo2 = new(2u, foo1.Id, "foo2", "foo2 2", null);
