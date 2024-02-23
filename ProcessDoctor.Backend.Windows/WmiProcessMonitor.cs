@@ -3,17 +3,20 @@ using System.Management;
 using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
+using ProcessDoctor.Backend.Core.Interfaces;
+using ProcessDoctor.Backend.Windows.WMI;
+using ManagementEventWatcher = System.Management.ManagementEventWatcher;
 
 namespace ProcessDoctor.Backend.Windows;
 
-public class WmiProcessMonitor : IProcessMonitor
+public class WmiProcessMonitor : IOldProcessMonitor
 {
     private readonly object _locker = new();
     public ObservableCollection<SystemProcess> Processes { get; } = [];
 
     public WmiProcessMonitor(Lifetime lifetime, ILog logger)
     {
-        using var snapshot = ProcessesSnapshot.Create();
+        using var snapshot = new ProcessProvider(lifetime, Log.GetLog<ProcessProvider>(), new ManagementEventWatcherAdapterFactory()).CreateSnapshot();
 
         foreach (var process in snapshot.EnumerateProcesses())
         {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace ProcessDoctor.Backend.Core;
+namespace ProcessDoctor.Backend.Core.Interfaces;
 
-public interface IProcessMonitor
+public interface IOldProcessMonitor
 {
     ObservableCollection<SystemProcess> Processes { get; }
 }
