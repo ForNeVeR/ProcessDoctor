@@ -60,12 +60,12 @@ internal sealed record WindowsProcess : SystemProcess
             id: processId,
             parentId: processId != parentId ? parentId : null,
             name: processEntry.ExeFile,
-            commandLine: parameters.CommandLine.ToManagedString(processHandle) ?? string.Empty,
+            commandLine: parameters.CommandLine.ToManagedString(processHandle),
             executablePath: parameters.ImagePathName.ToManagedString(processHandle));
     }
 
     /// <inheritdoc />
-    private WindowsProcess(uint id, uint? parentId, string name, string commandLine, string? executablePath)
+    private WindowsProcess(uint id, uint? parentId, string name, string? commandLine, string? executablePath)
         : base(id, parentId, name, commandLine, executablePath)
     { }
 }

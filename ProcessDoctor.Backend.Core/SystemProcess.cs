@@ -4,5 +4,5 @@ public abstract record SystemProcess(
     uint Id,
     uint? ParentId,
     string Name,
-    string CommandLine,
+    string? CommandLine,
     string? ExecutablePath);
