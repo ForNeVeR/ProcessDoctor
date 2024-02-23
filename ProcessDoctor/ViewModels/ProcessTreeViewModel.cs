@@ -34,12 +34,14 @@ public class ProcessTreeViewModel
         lifetime.AddDispose(
             processMonitor
                 .TerminatedProcesses
-                .Subscribe(OnProcessTerminated));
+                .Subscribe(process =>
+                    _logger.Catch(() => OnProcessTerminated(process))));
 
         lifetime.AddDispose(
             processMonitor
                 .LaunchedProcesses
-                .Subscribe(OnProcessLaunched));
+                .Subscribe(process =>
+                    _logger.Catch(() => OnProcessLaunched(process))));
     }
 
     private void OnProcessLaunched(SystemProcess process)
