@@ -25,6 +25,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Backend.Windo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Tests", "ProcessDoctor.Tests\ProcessDoctor.Tests.csproj", "{F45DBA78-E9A4-4C55-946C-24538B05C664}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Backend.Windows.Tests", "ProcessDoctor.Backend.Windows.Tests\ProcessDoctor.Backend.Windows.Tests.csproj", "{732E6C91-83E0-4197-9B02-21FD5BB0840F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.Backend.Core.Tests", "ProcessDoctor.Backend.Core.Tests\ProcessDoctor.Backend.Core.Tests.csproj", "{4703AD77-C7EE-4E50-83C3-69C1356068E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessDoctor.TestFramework", "ProcessDoctor.TestFramework\ProcessDoctor.TestFramework.csproj", "{6A05F117-4A4F-4921-9600-77AEED86F0D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BD3E309F-5175-4C68-8FFA-5F1A986C3D09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +43,10 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5676A1A5-3367-4ABB-AD65-CC249C98E622} = {0DDF662D-0DEC-421D-8A9B-6F8BF79F64D5}
+		{4703AD77-C7EE-4E50-83C3-69C1356068E3} = {BD3E309F-5175-4C68-8FFA-5F1A986C3D09}
+		{732E6C91-83E0-4197-9B02-21FD5BB0840F} = {BD3E309F-5175-4C68-8FFA-5F1A986C3D09}
+		{6A05F117-4A4F-4921-9600-77AEED86F0D2} = {BD3E309F-5175-4C68-8FFA-5F1A986C3D09}
+		{F45DBA78-E9A4-4C55-946C-24538B05C664} = {BD3E309F-5175-4C68-8FFA-5F1A986C3D09}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6346D6A2-0AB9-40F7-A191-B1AEA6C90207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -53,5 +65,17 @@ Global
 		{F45DBA78-E9A4-4C55-946C-24538B05C664}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F45DBA78-E9A4-4C55-946C-24538B05C664}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F45DBA78-E9A4-4C55-946C-24538B05C664}.Release|Any CPU.Build.0 = Release|Any CPU
+		{732E6C91-83E0-4197-9B02-21FD5BB0840F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{732E6C91-83E0-4197-9B02-21FD5BB0840F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{732E6C91-83E0-4197-9B02-21FD5BB0840F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{732E6C91-83E0-4197-9B02-21FD5BB0840F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4703AD77-C7EE-4E50-83C3-69C1356068E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4703AD77-C7EE-4E50-83C3-69C1356068E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4703AD77-C7EE-4E50-83C3-69C1356068E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4703AD77-C7EE-4E50-83C3-69C1356068E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A05F117-4A4F-4921-9600-77AEED86F0D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A05F117-4A4F-4921-9600-77AEED86F0D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A05F117-4A4F-4921-9600-77AEED86F0D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A05F117-4A4F-4921-9600-77AEED86F0D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
