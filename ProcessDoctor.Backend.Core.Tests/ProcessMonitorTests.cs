@@ -5,6 +5,7 @@ using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using ProcessDoctor.Backend.Core.Enums;
 using ProcessDoctor.Backend.Core.Interfaces;
+using ProcessDoctor.TestFramework;
 using ProcessDoctor.TestFramework.Extensions;
 using ProcessDoctor.TestFramework.Logging;
 using Xunit.Abstractions;

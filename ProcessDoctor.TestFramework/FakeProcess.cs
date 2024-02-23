@@ -1,6 +1,8 @@
-namespace ProcessDoctor.Backend.Core.Tests;
+using ProcessDoctor.Backend.Core;
 
-internal sealed record FakeProcess : SystemProcess
+namespace ProcessDoctor.TestFramework;
+
+public sealed record FakeProcess : SystemProcess
 {
     /// <inheritdoc />
     public FakeProcess(uint id, uint? parentId, string name, string? commandLine, string? executablePath)
