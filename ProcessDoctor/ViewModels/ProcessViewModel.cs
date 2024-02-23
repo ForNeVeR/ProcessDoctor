@@ -9,7 +9,7 @@ namespace ProcessDoctor.ViewModels;
 public record ProcessViewModel(
     uint Id,
     string Name,
-    string CommandLine,
+    string? CommandLine,
     Task<Bitmap?> Image,
     ObservableCollection<ProcessViewModel> Children)
 {
