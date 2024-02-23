@@ -1,28 +1,28 @@
+using JetBrains.Diagnostics;
 using PInvoke;
 using ProcessDoctor.Backend.Core;
+using ProcessDoctor.Backend.Core.Interfaces;
 
 namespace ProcessDoctor.Backend.Windows;
 
-internal sealed class ProcessesSnapshot : IDisposable
+internal sealed class ProcessListSnapshot : IProcessListSnapshot
 {
+    private readonly ILog _logger;
+
     private readonly Kernel32.SafeObjectHandle _snapshotHandle;
 
-    public static ProcessesSnapshot Create()
+    internal ProcessListSnapshot(ILog logger, Kernel32.SafeObjectHandle snapshotHandle)
     {
-        var nativeHandle = Kernel32.CreateToolhelp32Snapshot(
-            Kernel32.CreateToolhelp32SnapshotFlags.TH32CS_SNAPPROCESS,
-            th32ProcessID: 0);
-
-        return new ProcessesSnapshot(nativeHandle);
+        _logger = logger;
+        _snapshotHandle = snapshotHandle;
     }
-
-    private ProcessesSnapshot(Kernel32.SafeObjectHandle snapshotHandle)
-        => _snapshotHandle = snapshotHandle;
 
     public IEnumerable<SystemProcess> EnumerateProcesses()
     {
         if (_snapshotHandle.IsInvalid)
         {
+            _logger.Warn("Invalid snapshot handle received");
+
             yield break;
         }
 
