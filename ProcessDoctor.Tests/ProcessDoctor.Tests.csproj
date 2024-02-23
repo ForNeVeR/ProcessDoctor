@@ -4,13 +4,15 @@
         <TargetFramework>net8.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+        <PackageReference Include="NSubstitute" Version="5.1.0" />
+        <PackageReference Include="Microsoft.Reactive.Testing" Version="6.0.0" />
+        <PackageReference Include="FluentAssertions" Version="6.12.0" />
         <PackageReference Include="xunit" Version="2.6.4"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ProcessDoctor.Backend.Core\ProcessDoctor.Backend.Core.csproj" />
+      <ProjectReference Include="..\ProcessDoctor.TestFramework\ProcessDoctor.TestFramework.csproj" />
       <ProjectReference Include="..\ProcessDoctor\ProcessDoctor.csproj" />
     </ItemGroup>
 

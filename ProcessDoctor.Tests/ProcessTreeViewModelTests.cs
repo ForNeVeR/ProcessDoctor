@@ -1,7 +1,8 @@
 using System.Collections.ObjectModel;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
-using ProcessDoctor.Tests.TestFramework;
+using ProcessDoctor.TestFramework;
+using ProcessDoctor.TestFramework.Logging;
 using ProcessDoctor.ViewModels;
 using Xunit.Abstractions;
 
