@@ -5,7 +5,7 @@ using ProcessDoctor.Backend.Windows.WMI.Interfaces;
 
 namespace ProcessDoctor.Backend.Windows.WMI;
 
-internal sealed class ManagementEventWatcherAdapterFactory : IManagementEventWatcherFactory
+public sealed class ManagementEventWatcherAdapterFactory : IManagementEventWatcherFactory
 {
     /// <inheritdoc />
     public IManagementEventWatcher Create(ObservationTarget targetState)

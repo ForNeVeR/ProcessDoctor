@@ -7,8 +7,10 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
+using ProcessDoctor.Backend.Core;
 using ProcessDoctor.Backend.Core.Interfaces;
 using ProcessDoctor.Backend.Windows;
+using ProcessDoctor.Backend.Windows.WMI;
 using ReactiveUI;
 using Image = Avalonia.Controls.Image;
 
@@ -19,13 +21,19 @@ public class MainWindowViewModel : ViewModelBase
     public static MainWindowViewModel DesignInstance { get; } = new(
         Lifetime.Eternal,
         Log.GetLog<MainWindowViewModel>(),
-        new WmiProcessMonitor(Lifetime.Eternal, Log.GetLog<WmiProcessMonitor>()));
+        new ProcessMonitor(
+            Log.GetLog<ProcessMonitor>(),
+            new ProcessProvider(
+                Lifetime.Eternal,
+                Log.GetLog<ProcessProvider>(),
+                new ManagementEventWatcherAdapterFactory())));
 
     public HierarchicalTreeDataGridSource<ProcessViewModel> ItemSource { get; }
 
-    public MainWindowViewModel(Lifetime lifetime, ILog logger, IOldProcessMonitor processManager)
+    public MainWindowViewModel(Lifetime lifetime, ILog logger, IProcessMonitor processMonitor)
     {
-        var processTree = new ProcessTreeViewModel(logger, lifetime, processManager.Processes);
+        var processTree = new ProcessTreeViewModel(logger, lifetime, processMonitor);
+
         ItemSource = new(processTree.Processes)
         {
             Columns =

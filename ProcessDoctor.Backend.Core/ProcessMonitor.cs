@@ -5,7 +5,7 @@ using ProcessDoctor.Backend.Core.Interfaces;
 
 namespace ProcessDoctor.Backend.Core;
 
-public sealed class ProcessMonitor(ILog logger, IProcessProvider provider)
+public sealed class ProcessMonitor(ILog logger, IProcessProvider provider) : IProcessMonitor
 {
     public IObservable<SystemProcess> LaunchedProcesses
     {
