@@ -1,6 +1,9 @@
+using System.Drawing;
 using System.Management;
 using PInvoke;
 using ProcessDoctor.Backend.Core;
+using ProcessDoctor.Backend.Windows.Imaging;
+using ProcessDoctor.Backend.Windows.Imaging.Extensions;
 using ProcessDoctor.Backend.Windows.NT;
 using ProcessDoctor.Backend.Windows.NT.Extensions;
 using SkiaSharp;
@@ -70,29 +73,20 @@ internal sealed record WindowsProcess : SystemProcess
         : base(id, parentId, name, commandLine, executablePath)
     { }
 
-    public override Task<SKBitmap?> ExtractIconAsync()
+    public override SKBitmap ExtractIcon()
     {
         if (string.IsNullOrWhiteSpace(ExecutablePath))
         {
-            return Task.FromResult<SKBitmap?>(null);
+            return ExtractStockIcon();
         }
 
-        return Task.Run(() =>
-        {
-            var index = (ushort)0;
-            Span<char> iconPath = stackalloc char[ExecutablePath.Length];
-            ExecutablePath.CopyTo(iconPath);
+        using var icon = Icon.ExtractAssociatedIcon(ExecutablePath);
+        return icon?.ToSkBitmap() ?? ExtractStockIcon();
+    }
 
-            using var iconHandle = global::Windows.Win32.PInvoke.ExtractAssociatedIcon(ref iconPath, ref index);
-
-            if (iconHandle.IsInvalid)
-            {
-                return null;
-            }
-
-            var iconParameters = new SKImageInfo(width: 32, height: 32, SKImageInfo.PlatformColorType);
-            var image = SKImage.FromPixels(iconParameters, iconHandle.DangerousGetHandle());
-            return SKBitmap.FromImage(image);
-        });
+    private SKBitmap ExtractStockIcon()
+    {
+        using var stockIcon = StockIcon.Create(IconType.Application);
+        return stockIcon.ToSkBitmap();
     }
 }

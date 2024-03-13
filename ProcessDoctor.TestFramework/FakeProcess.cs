@@ -10,6 +10,6 @@ public sealed record FakeProcess : SystemProcess
         : base(id, parentId, name, commandLine, executablePath)
     { }
 
-    public override Task<SKBitmap?> ExtractIconAsync()
+    public override SKBitmap ExtractIcon()
         => throw new NotImplementedException();
 }

@@ -9,5 +9,5 @@ public abstract record SystemProcess(
     string? CommandLine,
     string? ExecutablePath)
 {
-    public abstract Task<SKBitmap?> ExtractIconAsync();
+    public abstract SKBitmap ExtractIcon();
 }
