@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 using DynamicData;
 using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
 using ProcessDoctor.Backend.Core.Interfaces;
-using ReactiveUI;
 
 namespace ProcessDoctor.ViewModels;
 
@@ -36,14 +34,12 @@ public class ProcessTreeViewModel
         lifetime.AddDispose(
             processMonitor
                 .TerminatedProcesses
-                .SubscribeOn(RxApp.MainThreadScheduler)
                 .Subscribe(process =>
                     _logger.Catch(() => OnProcessTerminated(process))));
 
         lifetime.AddDispose(
             processMonitor
                 .LaunchedProcesses
-                .SubscribeOn(RxApp.MainThreadScheduler)
                 .Subscribe(process =>
                     _logger.Catch(() => OnProcessLaunched(process))));
     }
