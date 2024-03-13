@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using Windows.Win32.Foundation;
 
 namespace ProcessDoctor.Backend.Windows.Imaging.Native;
 

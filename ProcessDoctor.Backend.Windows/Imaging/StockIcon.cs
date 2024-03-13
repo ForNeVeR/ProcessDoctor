@@ -1,6 +1,5 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Windows.Win32;
 using ProcessDoctor.Backend.Windows.Imaging.Native;
 
 namespace ProcessDoctor.Backend.Windows.Imaging;

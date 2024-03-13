@@ -18,9 +18,6 @@
       <!-- PInvoke is no longer maintained. We should use https://github.com/microsoft/CsWin32 when stable version is released -->
       <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
       <PackageReference Include="PInvoke.NTDll" Version="0.7.124" />
-      <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta">
-        <PrivateAssets>all</PrivateAssets>
-      </PackageReference>
     </ItemGroup>
 
 </Project>
