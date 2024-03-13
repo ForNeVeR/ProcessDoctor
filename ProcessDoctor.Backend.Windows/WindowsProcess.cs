@@ -3,6 +3,7 @@ using PInvoke;
 using ProcessDoctor.Backend.Core;
 using ProcessDoctor.Backend.Windows.NT;
 using ProcessDoctor.Backend.Windows.NT.Extensions;
+using SkiaSharp;
 
 namespace ProcessDoctor.Backend.Windows;
 
@@ -68,4 +69,30 @@ internal sealed record WindowsProcess : SystemProcess
     private WindowsProcess(uint id, uint? parentId, string name, string? commandLine, string? executablePath)
         : base(id, parentId, name, commandLine, executablePath)
     { }
+
+    public override Task<SKBitmap?> ExtractIconAsync()
+    {
+        if (string.IsNullOrWhiteSpace(ExecutablePath))
+        {
+            return Task.FromResult<SKBitmap?>(null);
+        }
+
+        return Task.Run(() =>
+        {
+            var index = (ushort)0;
+            Span<char> iconPath = stackalloc char[ExecutablePath.Length];
+            ExecutablePath.CopyTo(iconPath);
+
+            using var iconHandle = global::Windows.Win32.PInvoke.ExtractAssociatedIcon(ref iconPath, ref index);
+
+            if (iconHandle.IsInvalid)
+            {
+                return null;
+            }
+
+            var iconParameters = new SKImageInfo(width: 32, height: 32, SKImageInfo.PlatformColorType);
+            var image = SKImage.FromPixels(iconParameters, iconHandle.DangerousGetHandle());
+            return SKBitmap.FromImage(image);
+        });
+    }
 }

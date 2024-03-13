@@ -1,3 +1,5 @@
+using SkiaSharp;
+
 namespace ProcessDoctor.Backend.Core;
 
 public abstract record SystemProcess(
@@ -5,4 +7,7 @@ public abstract record SystemProcess(
     uint? ParentId,
     string Name,
     string? CommandLine,
-    string? ExecutablePath);
+    string? ExecutablePath)
+{
+    public abstract Task<SKBitmap?> ExtractIconAsync();
+}
