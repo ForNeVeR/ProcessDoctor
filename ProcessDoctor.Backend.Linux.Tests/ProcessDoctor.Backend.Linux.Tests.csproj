@@ -9,10 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ProcessDoctor.Backend.Linux\ProcessDoctor.Backend.Linux.csproj" />
       <ProjectReference Include="..\ProcessDoctor.TestFramework\ProcessDoctor.TestFramework.csproj" />
     </ItemGroup>
 

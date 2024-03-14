@@ -10,6 +10,7 @@
         <PackageReference Include="JetBrains.Lifetimes" Version="2023.3.3" />
         <PackageReference Include="SkiaSharp" Version="2.88.7" />
         <PackageReference Include="System.Reactive" Version="6.0.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
     </ItemGroup>
 
 </Project>
