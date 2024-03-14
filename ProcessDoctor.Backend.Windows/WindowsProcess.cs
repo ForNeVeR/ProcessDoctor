@@ -1,8 +1,12 @@
+using System.Drawing;
 using System.Management;
 using PInvoke;
 using ProcessDoctor.Backend.Core;
+using ProcessDoctor.Backend.Windows.Imaging;
+using ProcessDoctor.Backend.Windows.Imaging.Extensions;
 using ProcessDoctor.Backend.Windows.NT;
 using ProcessDoctor.Backend.Windows.NT.Extensions;
+using SkiaSharp;
 
 namespace ProcessDoctor.Backend.Windows;
 
@@ -68,4 +72,21 @@ internal sealed record WindowsProcess : SystemProcess
     private WindowsProcess(uint id, uint? parentId, string name, string? commandLine, string? executablePath)
         : base(id, parentId, name, commandLine, executablePath)
     { }
+
+    public override SKBitmap ExtractIcon()
+    {
+        if (string.IsNullOrWhiteSpace(ExecutablePath))
+        {
+            return ExtractStockIcon();
+        }
+
+        using var icon = Icon.ExtractAssociatedIcon(ExecutablePath);
+        return icon?.ToSkBitmap() ?? ExtractStockIcon();
+    }
+
+    private SKBitmap ExtractStockIcon()
+    {
+        using var stockIcon = StockIcon.Create(IconType.Application);
+        return stockIcon.ToSkBitmap();
+    }
 }

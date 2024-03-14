@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
@@ -11,8 +10,7 @@ using ProcessDoctor.Backend.Core;
 using ProcessDoctor.Backend.Core.Interfaces;
 using ProcessDoctor.Backend.Windows;
 using ProcessDoctor.Backend.Windows.WMI;
-using ReactiveUI;
-using Image = Avalonia.Controls.Image;
+using SkiaImageView;
 
 namespace ProcessDoctor.ViewModels;
 
@@ -99,9 +97,9 @@ public class MainWindowViewModel : ViewModelBase
             return grid;
         }
 
-        static Image BuildImageControl(ProcessViewModel? viewModel)
+        static SKImageView BuildImageControl(ProcessViewModel? viewModel)
         {
-            var image = new Image
+            var image = new SKImageView
             {
                 Width = 16.0,
                 Height = 16.0,
@@ -115,8 +113,8 @@ public class MainWindowViewModel : ViewModelBase
             }
 
             image.Bind(
-                Image.SourceProperty,
-                viewModel.Image.ToObservable(RxApp.TaskpoolScheduler));
+                SKImageView.SourceProperty,
+                viewModel.Image);
 
             return image;
         }

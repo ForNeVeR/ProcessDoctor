@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <PackageReference Include="System.Management" Version="8.0.0" />
+      <PackageReference Include="System.Drawing.Common" Version="8.0.3" />
 
       <!-- PInvoke is no longer maintained. We should use https://github.com/microsoft/CsWin32 when stable version is released -->
       <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
