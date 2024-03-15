@@ -5,8 +5,8 @@ namespace ProcessDoctor.Backend.Windows.WMI.Extensions;
 
 internal static class ObservationTargetExtensions
 {
-    internal static WqlEventQuery ToWqlQuery(this ObservationTarget targetState)
-        => targetState switch
+    internal static WqlEventQuery ToWqlQuery(this ObservationTarget observationTarget)
+        => observationTarget switch
         {
             ObservationTarget.Launched
                 => new WqlEventQuery(
@@ -17,8 +17,8 @@ internal static class ObservationTargetExtensions
                     "select * from __InstanceDeletionEvent within 1 where TargetInstance isa 'Win32_Process'"),
 
             _ => throw new ArgumentOutOfRangeException(
-                nameof(targetState),
-                targetState,
-                $"Process state {targetState} is not supported")
+                nameof(observationTarget),
+                observationTarget,
+                $"Process state {observationTarget} is not supported")
         };
 }

@@ -12,9 +12,9 @@ namespace ProcessDoctor.Backend.Windows;
 public sealed class ProcessProvider(Lifetime lifetime, ILog logger, IManagementEventWatcherFactory watcherFactory) : IProcessProvider
 {
     /// <inheritdoc />
-    public IObservable<SystemProcess> ObserveProcesses(ObservationTarget targetState)
+    public IObservable<SystemProcess> ObserveProcesses(ObservationTarget observationTarget)
     {
-        var watcher = watcherFactory.Create(targetState);
+        var watcher = watcherFactory.Create(observationTarget);
         var lifetimeScope = lifetime.CreateNested();
 
         lifetimeScope
@@ -31,7 +31,7 @@ public sealed class ProcessProvider(Lifetime lifetime, ILog logger, IManagementE
             {
                 logger.Error(exception, "An error occurred while processing an event received from WMI");
 
-                return ObserveProcesses(targetState);
+                return ObserveProcesses(observationTarget);
             });
     }
 

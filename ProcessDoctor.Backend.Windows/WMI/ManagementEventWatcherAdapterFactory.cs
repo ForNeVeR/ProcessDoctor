@@ -8,8 +8,8 @@ namespace ProcessDoctor.Backend.Windows.WMI;
 public sealed class ManagementEventWatcherAdapterFactory : IManagementEventWatcherFactory
 {
     /// <inheritdoc />
-    public IManagementEventWatcher Create(ObservationTarget targetState)
+    public IManagementEventWatcher Create(ObservationTarget observationTarget)
         => new ManagementEventWatcherAdapter(
             Log.GetLog<ManagementEventWatcherAdapter>(),
-            targetState.ToWqlQuery());
+            observationTarget.ToWqlQuery());
 }

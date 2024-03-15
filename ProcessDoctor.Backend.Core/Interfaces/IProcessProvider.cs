@@ -4,7 +4,7 @@ namespace ProcessDoctor.Backend.Core.Interfaces;
 
 public interface IProcessProvider
 {
-    IObservable<SystemProcess> ObserveProcesses(ObservationTarget targetState);
+    IObservable<SystemProcess> ObserveProcesses(ObservationTarget observationTarget);
 
     IProcessListSnapshot CreateSnapshot();
 }
