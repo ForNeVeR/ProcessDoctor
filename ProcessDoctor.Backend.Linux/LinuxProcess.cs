@@ -32,19 +32,28 @@ public sealed record LinuxProcess : SystemProcess
             return ExtractStockIcon(iconTheme);
         }
 
-        var file = FileFactory.NewForPath(ExecutablePath);
+        // TODO: Understand how to bind ExecutablePath and data from AppInfo
+        var application = AppInfoAdapter
+            .GetAll()
+            .FirstOrDefault(application => application.Executable.Contains(ExecutablePath));
 
-        using var fileMetadata = file.QueryInfo(
-            IconAttributes.Standard,
-            FileQueryInfoFlags.None,
-            cancellable: null);
+        if (application is null)
+        {
+            return ExtractStockIcon(iconTheme);
+        }
 
-        using var iconMetadata = iconTheme.LookupIcon(
-            fileMetadata.Icon,
+        // TODO: Fix quality, color, size
+        using var icon = iconTheme.LookupIcon(
+            application.Icon,
             size: 16,
             IconLookupFlags.UseBuiltin);
 
-        return SKBitmap.Decode(iconMetadata.Filename);
+        using var buffer = icon.LoadIcon();
+
+        return SKBitmap.FromImage(
+            SKImage.FromPixels(
+                new SKImageInfo(width: 16, height: 16),
+                buffer.Pixels));
     }
 
     private SKBitmap ExtractStockIcon(IconTheme iconTheme)
