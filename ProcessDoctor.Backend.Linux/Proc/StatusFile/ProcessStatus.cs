@@ -1,10 +1,11 @@
 using System.IO.Abstractions;
 using ProcessDoctor.Backend.Linux.Proc.Exceptions;
+using ProcessDoctor.Backend.Linux.Proc.Interfaces;
 using ProcessDoctor.Backend.Linux.Proc.StatusFile.Enums;
 
 namespace ProcessDoctor.Backend.Linux.Proc.StatusFile;
 
-public sealed class ProcessStatus
+public sealed class ProcessStatus : IProcessStatus
 {
     private const char Separator = ':';
     private readonly string[] _lines;

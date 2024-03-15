@@ -2,12 +2,13 @@ using System.IO.Abstractions;
 using System.Text;
 using ProcessDoctor.Backend.Linux.Proc.Exceptions;
 using ProcessDoctor.Backend.Linux.Proc.Extensions;
+using ProcessDoctor.Backend.Linux.Proc.Interfaces;
 using ProcessDoctor.Backend.Linux.Proc.Native;
 using ProcessDoctor.Backend.Linux.Proc.StatusFile;
 
 namespace ProcessDoctor.Backend.Linux.Proc;
 
-public sealed class ProcessEntry
+public sealed class ProcessEntry : IProcessEntry
 {
     public static ProcessEntry Create(IDirectoryInfo directory)
     {
@@ -23,7 +24,7 @@ public sealed class ProcessEntry
 
     public string? ExecutablePath { get; }
 
-    public ProcessStatus Status { get; }
+    public IProcessStatus Status { get; }
 
     private ProcessEntry(IDirectoryInfo directory)
     {
