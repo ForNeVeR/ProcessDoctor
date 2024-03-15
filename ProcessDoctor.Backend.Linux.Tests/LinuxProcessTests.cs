@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using FluentAssertions;
+using ProcessDoctor.Backend.Linux.Tests.Fakes;
 
 namespace ProcessDoctor.Backend.Linux.Tests;
 

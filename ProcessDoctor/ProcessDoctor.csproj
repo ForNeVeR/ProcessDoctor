@@ -24,5 +24,6 @@
     <ItemGroup>
       <ProjectReference Include="..\ProcessDoctor.Backend.Core\ProcessDoctor.Backend.Core.csproj" />
       <ProjectReference Include="..\ProcessDoctor.Backend.Windows\ProcessDoctor.Backend.Windows.csproj" />
+      <ProjectReference Include="..\ProcessDoctor.Backend.Linux\ProcessDoctor.Backend.Linux.csproj" />
     </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 using ProcessDoctor.Backend.Linux.Proc.Interfaces;
 using ProcessDoctor.Backend.Linux.Proc.StatusFile.Enums;
 
-namespace ProcessDoctor.Backend.Linux.Tests;
+namespace ProcessDoctor.Backend.Linux.Tests.Fakes;
 
 public sealed class FakeProcessStatus : IProcessStatus
 {

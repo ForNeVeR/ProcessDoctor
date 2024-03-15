@@ -8,8 +8,6 @@ using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
 using ProcessDoctor.Backend.Core.Interfaces;
-using ProcessDoctor.Backend.Windows;
-using ProcessDoctor.Backend.Windows.WMI;
 using SkiaImageView;
 
 namespace ProcessDoctor.ViewModels;
@@ -21,10 +19,8 @@ public class MainWindowViewModel : ViewModelBase
         Log.GetLog<MainWindowViewModel>(),
         new ProcessMonitor(
             Log.GetLog<ProcessMonitor>(),
-            new ProcessProvider(
-                Lifetime.Eternal,
-                Log.GetLog<ProcessProvider>(),
-                new ManagementEventWatcherAdapterFactory())));
+            new ProcessProviderFactory()
+                .Create(Lifetime.Eternal)));
 
     public HierarchicalTreeDataGridSource<ProcessViewModel> ItemSource { get; }
 

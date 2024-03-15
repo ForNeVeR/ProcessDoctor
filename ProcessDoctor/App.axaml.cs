@@ -4,8 +4,6 @@ using Avalonia.Markup.Xaml;
 using JetBrains.Diagnostics;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
-using ProcessDoctor.Backend.Windows;
-using ProcessDoctor.Backend.Windows.WMI;
 using ProcessDoctor.ViewModels;
 using ProcessDoctor.Views;
 
@@ -21,12 +19,13 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var lifetime = CreateAppLifetime();
+
+        var processProvider = new ProcessProviderFactory()
+            .Create(Lifetime.Eternal);
+
         var backend = new ProcessMonitor(
             Log.GetLog<ProcessMonitor>(),
-            new ProcessProvider(
-                Lifetime.Eternal,
-                Log.GetLog<ProcessProvider>(),
-                new ManagementEventWatcherAdapterFactory()));
+            processProvider);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

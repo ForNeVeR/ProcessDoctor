@@ -1,12 +1,12 @@
-using System.IO.Abstractions.TestingHelpers;
 using FluentAssertions;
 using ProcessDoctor.Backend.Linux.Proc.Exceptions;
 using ProcessDoctor.Backend.Linux.Proc.StatusFile;
 using ProcessDoctor.Backend.Linux.Proc.StatusFile.Enums;
+using ProcessDoctor.Backend.Linux.Tests.Fixtures;
 
 namespace ProcessDoctor.Backend.Linux.Tests.ProcTests;
 
-public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : IClassFixture<ProcFileSystemFixture>
+public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IClassFixture<ProcFolderFixture>
 {
     [Theory]
     [InlineData("stat")]
@@ -16,7 +16,8 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Should_throw_exception_if_status_file_name_is_invalid(string statusFileName)
     {
         // Arrange
-        var statusFile = new MockFileSystem()
+        var statusFile = procFolderFixture
+            .FileSystem
             .FileInfo
             .New(statusFileName);
 
@@ -32,7 +33,7 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Should_read_name_properly(string expectedName)
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 $"""
@@ -53,7 +54,7 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Should_throw_exception_if_name_is_invalid()
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 """
@@ -76,7 +77,7 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Should_read_parent_id_properly(uint expectedParentId)
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 $"""
@@ -101,7 +102,7 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Parent_id_should_be_null_if_value_was_zero()
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 """
@@ -129,7 +130,7 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Should_throw_exception_if_parent_id_is_invalid(string expectedParentId)
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 $"""
@@ -159,7 +160,7 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Should_read_state_properly(string rawState, ProcessState expectedState)
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 $"""
@@ -180,7 +181,7 @@ public sealed class ProcessStatusTests(ProcFileSystemFixture procFileSystem) : I
     public void Should_throw_exception_if_state_is_invalid()
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 """

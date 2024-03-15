@@ -1,11 +1,12 @@
-using System.IO.Abstractions.TestingHelpers;
 using FluentAssertions;
 using ProcessDoctor.Backend.Linux.Proc;
 using ProcessDoctor.Backend.Linux.Proc.Exceptions;
+using ProcessDoctor.Backend.Linux.Proc.StatusFile;
+using ProcessDoctor.Backend.Linux.Tests.Fixtures;
 
 namespace ProcessDoctor.Backend.Linux.Tests.ProcTests;
 
-public sealed class ProcessEntryTests(ProcFileSystemFixture procFileSystem) : IClassFixture<ProcFileSystemFixture>
+public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : IClassFixture<ProcFolderFixture>
 {
     [Theory]
     [InlineData("dir")]
@@ -15,7 +16,8 @@ public sealed class ProcessEntryTests(ProcFileSystemFixture procFileSystem) : IC
     public void Should_throw_exception_if_directory_is_not_process(string directoryName)
     {
         // Arrange
-        var processDirectory = new MockFileSystem()
+        var processDirectory = procFolderFixture
+            .FileSystem
             .DirectoryInfo
             .New(directoryName);
 
@@ -32,7 +34,7 @@ public sealed class ProcessEntryTests(ProcFileSystemFixture procFileSystem) : IC
     public void Should_read_process_id_properly(uint expectedId)
     {
         // Arrange & Act
-        var process = procFileSystem.CreateProcess(expectedId);
+        var process = procFolderFixture.CreateProcess(expectedId);
         var sut = ProcessEntry.Create(process.Directory);
 
         // Assert
@@ -47,7 +49,7 @@ public sealed class ProcessEntryTests(ProcFileSystemFixture procFileSystem) : IC
     public void Should_read_process_command_line_properly(string expectedCommandLine)
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.CommandLineFile.CreateText())
             writer.Write(expectedCommandLine);
 
@@ -64,7 +66,7 @@ public sealed class ProcessEntryTests(ProcFileSystemFixture procFileSystem) : IC
     public void Command_line_should_be_null_if_file_is_empty()
     {
         // Arrange
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
 
         // Act
         var sut = ProcessEntry.Create(process.Directory);
@@ -79,7 +81,7 @@ public sealed class ProcessEntryTests(ProcFileSystemFixture procFileSystem) : IC
     public void Should_read_process_status_section_properly()
     {
         // Arrange & Act
-        var process = procFileSystem.CreateProcess(123u);
+        var process = procFolderFixture.CreateProcess(123u);
         using (var writer = process.StatusFile.CreateText())
             writer.Write(
                 """
@@ -93,6 +95,8 @@ public sealed class ProcessEntryTests(ProcFileSystemFixture procFileSystem) : IC
         // Assert
         sut.Status
             .Should()
-            .NotBeNull();
+            .NotBeNull()
+            .And
+            .BeOfType<ProcessStatus>();
     }
 }

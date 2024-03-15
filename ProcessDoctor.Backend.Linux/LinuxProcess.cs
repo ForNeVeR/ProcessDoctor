@@ -41,7 +41,7 @@ public sealed record LinuxProcess : SystemProcess
 
         using var iconMetadata = iconTheme.LookupIcon(
             fileMetadata.Icon,
-            size: 32,
+            size: 16,
             IconLookupFlags.UseBuiltin);
 
         return SKBitmap.Decode(iconMetadata.Filename);
@@ -53,7 +53,7 @@ public sealed record LinuxProcess : SystemProcess
 
         using var iconMetadata = iconTheme.LookupIcon(
             icon,
-            size: 32,
+            size: 16,
             IconLookupFlags.UseBuiltin);
 
         return SKBitmap.Decode(iconMetadata.Filename);
