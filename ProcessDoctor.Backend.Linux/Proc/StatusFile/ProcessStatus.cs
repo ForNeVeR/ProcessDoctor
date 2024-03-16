@@ -9,6 +9,9 @@ public sealed class ProcessStatus : IProcessStatus
 {
     private const char Separator = ':';
     private readonly string[] _lines;
+    private string? _cachedName;
+    private uint? _cachedParentId;
+    private ProcessState? _cachedState;
 
     public static ProcessStatus Create(IFileInfo statusFile)
     {
@@ -24,13 +27,26 @@ public sealed class ProcessStatus : IProcessStatus
     }
 
     public string Name
-        => ReadPropertyValue(StatusProperty.Name)
-            ?? throw new InvalidStatusFilePropertyException(StatusProperty.Name);
+    {
+        get
+        {
+            if (_cachedName is not null)
+                return _cachedName;
+
+            var name = ReadPropertyValue(StatusProperty.Name)
+                ?? throw new InvalidStatusFilePropertyException(StatusProperty.Name);
+
+            return _cachedName ??= name;
+        }
+    }
 
     public uint? ParentId
     {
         get
         {
+            if (_cachedParentId is not null)
+                return _cachedParentId;
+
             var value = ReadPropertyValue(StatusProperty.ParentId);
 
             if (!uint.TryParse(value, out var parentId))
@@ -39,7 +55,7 @@ public sealed class ProcessStatus : IProcessStatus
             if (parentId is 0)
                 return null;
 
-            return parentId;
+            return _cachedParentId ??= parentId;
         }
     }
 
@@ -47,10 +63,13 @@ public sealed class ProcessStatus : IProcessStatus
     {
         get
         {
-            var value = ReadPropertyValue(StatusProperty.State)?
+            if (_cachedState is not null)
+                return _cachedState.Value;
+
+            var acronym = ReadPropertyValue(StatusProperty.State)?
                 .First();
 
-            var state = value switch
+            var state = acronym switch
             {
                 'R' => ProcessState.Running,
                 'S' => ProcessState.Sleeping,
@@ -63,7 +82,7 @@ public sealed class ProcessStatus : IProcessStatus
             if (state is null)
                 throw new InvalidStatusFilePropertyException(StatusProperty.State);
 
-            return state.Value;
+            return _cachedState ??= state.Value;
         }
     }
 
