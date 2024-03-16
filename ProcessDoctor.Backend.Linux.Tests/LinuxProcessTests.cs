@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using FluentAssertions;
 using ProcessDoctor.Backend.Linux.Tests.Fakes;
 
@@ -10,7 +9,7 @@ public sealed class LinuxProcessTests
     [InlineData("/usr/bin/htop")]
     public void Should_extract_icon(string executablePath)
     {
-        Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+        Skip.IfNot(OperatingSystem.IsLinux());
 
         // Arrange
         var processEntry = FakeProcessEntry.Create(id: 123u, executablePath: executablePath);
@@ -29,7 +28,7 @@ public sealed class LinuxProcessTests
     [SkippableFact]
     public void Should_extract_stock_icon()
     {
-        Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+        Skip.IfNot(OperatingSystem.IsLinux());
 
         // Arrange
         var processEntry = FakeProcessEntry.Create(id: 123u);
