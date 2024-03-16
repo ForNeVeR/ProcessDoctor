@@ -32,7 +32,7 @@ public sealed record LinuxProcess : SystemProcess
             return ExtractStockIcon(iconTheme);
         }
 
-        // TODO: Understand how to bind ExecutablePath and data from AppInfo
+        // TODO[#27]: Understand how to bind ExecutablePath and data from AppInfo
         var application = AppInfoAdapter
             .GetAll()
             .FirstOrDefault(application => application.Executable.Contains(ExecutablePath));
@@ -42,7 +42,7 @@ public sealed record LinuxProcess : SystemProcess
             return ExtractStockIcon(iconTheme);
         }
 
-        // TODO: Fix quality, color, size
+        // TODO[#28]: Fix quality, color, size
         using var icon = iconTheme.LookupIcon(
             application.Icon,
             size: 16,

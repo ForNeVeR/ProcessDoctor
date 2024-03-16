@@ -7,7 +7,7 @@ internal static class LibC
     private const string Name = "libc";
 
     [DllImport(Name, EntryPoint = "readlink", SetLastError = true)]
-    private static extern int NativeReadLink(string path, byte[] buffer, int bufferSize); // TODO: Make testable
+    private static extern int NativeReadLink(string path, byte[] buffer, int bufferSize); // TODO[#26]: Make testable
 
     /// <remarks>
     /// The DllImportAttribute provides a SetLastError property
