@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using FluentAssertions;
 using JetBrains.Lifetimes;
 using ProcessDoctor.Backend.Core;
 using ProcessDoctor.TestFramework;
@@ -8,91 +9,121 @@ using Xunit.Abstractions;
 
 namespace ProcessDoctor.Tests;
 
-// TODO[#29]: Rewrite assertions using FluentAssertions
 public class ProcessTreeViewModelTests(ITestOutputHelper output)
 {
     [Fact]
-    public void ListBehaviorTest()
+    public void Should_handle_parent_processes_properly()
     {
+        // Arrange
         using var logger = new ThrowingLoggerAdapter(nameof(ProcessTreeViewModelTests), output);
-        using var ld = new LifetimeDefinition();
+        using var lifetimeScope = new LifetimeDefinition();
         var models = new ObservableCollection<SystemProcess>();
         using var processMonitor = new ObservableCollectionProcessMonitor(models);
-        var tree = new ProcessTreeViewModel(logger, ld.Lifetime, processMonitor).Processes;
+        var tree = new ProcessTreeViewModel(logger, lifetimeScope.Lifetime, processMonitor).Processes;
 
-        FakeProcess foo = new(1u, null, "foo", "foo 1", null);
-        FakeProcess bar = new(2u, null, "bar", "bar 2", null);
+        var foo = new FakeProcess(1u, null, "foo", "foo 1", null);
+        var bar = new FakeProcess(2u, null, "bar", "bar 2", null);
 
+        // Act
         models.Add(foo);
         models.Add(bar);
 
-        Assert.Collection(
-            tree,
-            x => Assert.Equivalent(ProcessViewModel.Of(foo), x),
-            x => Assert.Equivalent(ProcessViewModel.Of(bar), x));
+        // Assert
+        tree.Should()
+            .BeEquivalentTo(
+                new[]
+                {
+                    ProcessViewModel.Of(foo),
+                    ProcessViewModel.Of(bar)
+                },
+                options => options.WithStrictOrdering());
 
+        // Act
         models.Remove(foo);
-        Assert.Collection(
-            tree,
-            x => Assert.Equivalent(ProcessViewModel.Of(bar), x));
+
+        // Assert
+        tree.Should()
+            .BeEquivalentTo(
+                new[] { ProcessViewModel.Of(bar) },
+                options => options.WithStrictOrdering());
     }
 
     [Fact]
-    public void TreeBehaviorTest()
+    public void Should_handle_child_processes_properly()
     {
+        // Arrange
         using var logger = new ThrowingLoggerAdapter(nameof(ProcessTreeViewModelTests), output);
-        using var ld = new LifetimeDefinition();
+        using var lifetimeScope = new LifetimeDefinition();
         var models = new ObservableCollection<SystemProcess>();
         using var processMonitor = new ObservableCollectionProcessMonitor(models);
-        var tree = new ProcessTreeViewModel(logger, ld.Lifetime, processMonitor).Processes;
+        var tree = new ProcessTreeViewModel(logger, lifetimeScope.Lifetime, processMonitor).Processes;
 
-        FakeProcess foo1 = new(1u, null, "foo1", "foo1 1", null);
-        FakeProcess foo2 = new(2u, foo1.Id, "foo2", "foo2 2", null);
-        FakeProcess foo3 = new(3u, foo2.Id, "foo3", "foo3 3", null);
-        FakeProcess bar = new(4u, null, "bar", "bar 3", null);
+        var foo1 = new FakeProcess(1u, null, "foo1", "foo1 1", null);
+        var foo2 = new FakeProcess(2u, foo1.Id, "foo2", "foo2 2", null);
+        var foo3 = new FakeProcess(3u, foo2.Id, "foo3", "foo3 3", null);
+        var bar = new FakeProcess(4u, null, "bar", "bar 3", null);
 
+        // Act
         models.Add(foo1);
         models.Add(bar);
 
-        Assert.Collection(
-            tree,
-            x => Assert.Equivalent(ProcessViewModel.Of(foo1), x),
-            x => Assert.Equivalent(ProcessViewModel.Of(bar), x));
+        // Assert
+        tree.Should()
+            .BeEquivalentTo(
+                new[]
+                {
+                    ProcessViewModel.Of(foo1),
+                    ProcessViewModel.Of(bar)
+                },
+                options => options.WithStrictOrdering());
 
+        // Act
         models.Add(foo2);
 
-        Assert.Collection(
-            tree,
-            x =>
-            {
-                Assert.Equivalent(ProcessViewModel.Of(foo1) with
+        // Assert
+        tree.Should()
+            .BeEquivalentTo(
+                new[]
                 {
-                    Children = [ProcessViewModel.Of(foo2)]
-                }, x, strict: true);
-            },
-            x => Assert.Equivalent(x, ProcessViewModel.Of(bar)));
+                    ProcessViewModel.Of(foo1) with
+                    {
+                        Children = [ProcessViewModel.Of(foo2)]
+                    },
+                    ProcessViewModel.Of(bar)
+                },
+                options => options.WithStrictOrdering());
 
+        // Act
         models.Remove(foo1);
-        Assert.Collection(
-            tree,
-            x => Assert.Equivalent(ProcessViewModel.Of(bar), x),
-            x => Assert.Equivalent(ProcessViewModel.Of(foo2), x));
 
+        // Assert
+        tree.Should()
+            .BeEquivalentTo(
+                new[]
+                {
+                    ProcessViewModel.Of(bar),
+                    ProcessViewModel.Of(foo2)
+                },
+                options => options.WithStrictOrdering());
+
+        // Act
         models.Add(foo3);
         models.Add(foo1);
 
-        Assert.Collection(
-            tree,
-            x => Assert.Equivalent(x, ProcessViewModel.Of(bar)),
-            x =>
-            {
-                Assert.Equivalent(ProcessViewModel.Of(foo1) with
+        // Assert
+        tree.Should()
+            .BeEquivalentTo(
+                new[]
                 {
-                    Children = [ProcessViewModel.Of(foo2) with
+                    ProcessViewModel.Of(bar),
+                    ProcessViewModel.Of(foo1) with
                     {
-                        Children = [ProcessViewModel.Of(foo3)]
-                    }]
-                }, x, strict: true);
-            });
+                        Children = [ProcessViewModel.Of(foo2) with
+                        {
+                            Children = [ProcessViewModel.Of(foo3)]
+                        }]
+                    }
+                },
+                options => options.WithStrictOrdering());
     }
 }
