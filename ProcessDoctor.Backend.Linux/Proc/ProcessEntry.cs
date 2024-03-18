@@ -1,9 +1,7 @@
 using System.IO.Abstractions;
-using System.Text;
 using ProcessDoctor.Backend.Linux.Proc.Exceptions;
 using ProcessDoctor.Backend.Linux.Proc.Extensions;
 using ProcessDoctor.Backend.Linux.Proc.Interfaces;
-using ProcessDoctor.Backend.Linux.Proc.Native;
 using ProcessDoctor.Backend.Linux.Proc.StatusFile;
 
 namespace ProcessDoctor.Backend.Linux.Proc;
@@ -55,20 +53,30 @@ public sealed class ProcessEntry : IProcessEntry
 
     private static string? ReadExecutablePath(IDirectoryInfo directory)
     {
-        var path = directory
+        var linkPath = directory
             .FileSystem
             .Path
             .Combine(directory.FullName, ProcPaths.ExecutablePath.FileName);
 
-        var buffer = new byte[ProcPaths.ExecutablePath.MaxSize + 1];
-        var count = LibC.ReadLink(path, buffer, ProcPaths.ExecutablePath.MaxSize);
-
-        if (count <= 0)
+        if (!directory.FileSystem.Path.Exists(linkPath))
+        {
             return null;
+        }
 
-        buffer[count] = 0x0;
+        try
+        {
+            var linkTarget = directory
+                .FileSystem
+                .File
+                .ResolveLinkTarget(linkPath, returnFinalTarget: false);
 
-        return Encoding.UTF8.GetString(buffer, index: 0, count);
+            return linkTarget?.FullName;
+        }
+
+        catch (UnauthorizedAccessException)
+        {
+            return null;
+        }
     }
 
     private static ProcessStatus ReadStatus(IDirectoryInfo directory)
