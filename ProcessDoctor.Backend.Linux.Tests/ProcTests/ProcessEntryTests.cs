@@ -77,11 +77,13 @@ public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : ICl
             .BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData("/ProcessDoctor")]
     [InlineData("/NET/ProcessDoctor")]
     public void Should_read_process_executable_path_properly(string expectedExecutablePath)
     {
+        Skip.IfNot(OperatingSystem.IsLinux());
+
         // Arrange
         var processFixture = procFolderFixture.CreateProcess(123u);
 
