@@ -1,3 +1,4 @@
+using System.IO.Abstractions.TestingHelpers;
 using FluentAssertions;
 using ProcessDoctor.Backend.Linux.Proc;
 using ProcessDoctor.Backend.Linux.Proc.Exceptions;
@@ -16,8 +17,7 @@ public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : ICl
     public void Should_throw_exception_if_directory_is_not_process(string directoryName)
     {
         // Arrange
-        var processDirectory = procFolderFixture
-            .FileSystem
+        var processDirectory = new MockFileSystem()
             .DirectoryInfo
             .New(directoryName);
 
@@ -34,8 +34,8 @@ public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : ICl
     public void Should_read_process_id_properly(uint expectedId)
     {
         // Arrange & Act
-        var process = procFolderFixture.CreateProcess(expectedId);
-        var sut = ProcessEntry.Create(process.Directory);
+        var processFixture = procFolderFixture.CreateProcess(expectedId);
+        var sut = ProcessEntry.Create(processFixture.Directory);
 
         // Assert
         sut.Id
@@ -44,17 +44,17 @@ public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : ICl
     }
 
     [Theory]
-    [InlineData("cmdline")]
-    [InlineData(@"C:\NET\ProcessDoctor\ProcessDoctor.exe")]
+    [InlineData("/usr/sbin/cron -f - P")]
+    [InlineData("/sbin/init splash")]
     public void Should_read_process_command_line_properly(string expectedCommandLine)
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.CommandLineFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.CommandLineFile.CreateText())
             writer.Write(expectedCommandLine);
 
         // Act
-        var sut = ProcessEntry.Create(process.Directory);
+        var sut = ProcessEntry.Create(processFixture.Directory);
 
         // Assert
         sut.CommandLine
@@ -66,13 +66,54 @@ public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : ICl
     public void Command_line_should_be_null_if_file_is_empty()
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
+        var processFixture = procFolderFixture.CreateProcess(123u);
 
         // Act
-        var sut = ProcessEntry.Create(process.Directory);
+        var sut = ProcessEntry.Create(processFixture.Directory);
 
         // Assert
         sut.CommandLine
+            .Should()
+            .BeNull();
+    }
+
+    [Theory]
+    [InlineData("/ProcessDoctor")]
+    [InlineData("/NET/ProcessDoctor")]
+    public void Should_read_process_executable_path_properly(string expectedExecutablePath)
+    {
+        // Arrange
+        var processFixture = procFolderFixture.CreateProcess(123u);
+
+        processFixture
+            .FileSystem
+            .AddEmptyFile(expectedExecutablePath);
+
+        processFixture
+            .FileSystem
+            .File
+            .CreateSymbolicLink(processFixture.ExecutableLinkFile.FullName, expectedExecutablePath);
+
+        // Act
+        var sut = ProcessEntry.Create(processFixture.Directory);
+
+        // Assert
+        sut.ExecutablePath
+            .Should()
+            .Be(expectedExecutablePath);
+    }
+
+    [Fact]
+    public void Executable_path_should_be_null_if_link_is_not_exists()
+    {
+        // Arrange
+        var processFixture = procFolderFixture.CreateProcess(123u);
+
+        // Act
+        var sut = ProcessEntry.Create(processFixture.Directory);
+
+        // Assert
+        sut.ExecutablePath
             .Should()
             .BeNull();
     }
@@ -81,8 +122,8 @@ public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : ICl
     public void Should_read_process_status_section_properly()
     {
         // Arrange & Act
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 """
                     Name: ProcessDoctor
@@ -90,7 +131,7 @@ public sealed class ProcessEntryTests(ProcFolderFixture procFolderFixture) : ICl
                     ...
                 """);
 
-        var sut = ProcessEntry.Create(process.Directory);
+        var sut = ProcessEntry.Create(processFixture.Directory);
 
         // Assert
         sut.Status

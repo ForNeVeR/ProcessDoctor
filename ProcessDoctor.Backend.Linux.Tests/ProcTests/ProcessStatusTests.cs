@@ -1,3 +1,4 @@
+using System.IO.Abstractions.TestingHelpers;
 using FluentAssertions;
 using ProcessDoctor.Backend.Linux.Proc.Exceptions;
 using ProcessDoctor.Backend.Linux.Proc.StatusFile;
@@ -16,8 +17,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Should_throw_exception_if_status_file_name_is_invalid(string statusFileName)
     {
         // Arrange
-        var statusFile = procFolderFixture
-            .FileSystem
+        var statusFile = new MockFileSystem()
             .FileInfo
             .New(statusFileName);
 
@@ -33,8 +33,8 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Should_read_name_properly(string expectedName)
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 $"""
                     Name: {expectedName}
@@ -42,7 +42,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
                     ...
                 """);
 
-        var sut = ProcessStatus.Create(process.StatusFile);
+        var sut = ProcessStatus.Create(processFixture.StatusFile);
 
         // Act & Assert
         sut.Name
@@ -54,8 +54,8 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Should_throw_exception_if_name_is_invalid()
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 """
                      Name:
@@ -63,7 +63,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
                      ...
                  """);
 
-        var sut = ProcessStatus.Create(process.StatusFile);
+        var sut = ProcessStatus.Create(processFixture.StatusFile);
 
         // Act & Assert
         sut.Invoking(status => status.Name)
@@ -77,8 +77,8 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Should_read_parent_id_properly(uint expectedParentId)
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 $"""
                      Name: ProcessDoctor
@@ -90,7 +90,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
                      PPid: {expectedParentId}
                  """);
 
-        var sut = ProcessStatus.Create(process.StatusFile);
+        var sut = ProcessStatus.Create(processFixture.StatusFile);
 
         // Act & Assert
         sut.ParentId
@@ -102,8 +102,8 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Parent_id_should_be_null_if_value_was_zero()
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 """
                      Name: ProcessDoctor
@@ -115,7 +115,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
                      PPid: 0
                  """);
 
-        var sut = ProcessStatus.Create(process.StatusFile);
+        var sut = ProcessStatus.Create(processFixture.StatusFile);
 
         // Act & Assert
         sut.ParentId
@@ -130,8 +130,8 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Should_throw_exception_if_parent_id_is_invalid(string expectedParentId)
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 $"""
                      Name: ProcessDoctor
@@ -143,7 +143,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
                      PPid: {expectedParentId}
                  """);
 
-        var sut = ProcessStatus.Create(process.StatusFile);
+        var sut = ProcessStatus.Create(processFixture.StatusFile);
 
         // Act & Assert
         sut.Invoking(status => status.ParentId)
@@ -160,8 +160,8 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Should_read_state_properly(string rawState, ProcessState expectedState)
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 $"""
                     Name: ProcessDoctor
@@ -169,7 +169,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
                     State: {rawState}
                 """);
 
-        var sut = ProcessStatus.Create(process.StatusFile);
+        var sut = ProcessStatus.Create(processFixture.StatusFile);
 
         // Act & Assert
         sut.State
@@ -181,8 +181,8 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
     public void Should_throw_exception_if_state_is_invalid()
     {
         // Arrange
-        var process = procFolderFixture.CreateProcess(123u);
-        using (var writer = process.StatusFile.CreateText())
+        var processFixture = procFolderFixture.CreateProcess(123u);
+        using (var writer = processFixture.StatusFile.CreateText())
             writer.Write(
                 """
                      Name: ProcessDoctor
@@ -190,7 +190,7 @@ public sealed class ProcessStatusTests(ProcFolderFixture procFolderFixture) : IC
                      State:
                  """);
 
-        var sut = ProcessStatus.Create(process.StatusFile);
+        var sut = ProcessStatus.Create(processFixture.StatusFile);
 
         // Act & Assert
         sut.Invoking(status => status.State)
