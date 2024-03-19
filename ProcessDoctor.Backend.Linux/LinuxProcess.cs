@@ -1,3 +1,4 @@
+using Gdk;
 using GLib;
 using Gtk;
 using ProcessDoctor.Backend.Core;
@@ -42,29 +43,37 @@ public sealed record LinuxProcess : SystemProcess
             return ExtractStockIcon(iconTheme);
         }
 
-        // TODO[#28]: Fix quality, color, size
         using var icon = iconTheme.LookupIcon(
             application.Icon,
-            size: 16,
+            IconAttributes.DefaultIconSize,
             IconLookupFlags.UseBuiltin);
 
         using var buffer = icon.LoadIcon();
-
-        return SKBitmap.FromImage(
-            SKImage.FromPixels(
-                new SKImageInfo(width: 16, height: 16),
-                buffer.Pixels));
+        return ExtractIconUsingPixbuf(buffer);
     }
 
     private SKBitmap ExtractStockIcon(IconTheme iconTheme)
     {
-        var icon = ContentType.GetIcon(MimeTypes.Executable);
-
-        using var iconMetadata = iconTheme.LookupIcon(
-            icon,
-            size: 16,
+        using var icon = iconTheme.LookupIcon(
+            ContentType.GetIcon(MimeTypes.Executable),
+            IconAttributes.DefaultIconSize,
             IconLookupFlags.UseBuiltin);
 
-        return SKBitmap.Decode(iconMetadata.Filename);
+        using var buffer = icon.LoadIcon();
+        return ExtractIconUsingPixbuf(buffer);
+    }
+
+    private SKBitmap ExtractIconUsingPixbuf(Pixbuf buffer)
+    {
+        var iconProperties = new SKImageInfo(
+            width: buffer.Width,
+            height: buffer.Height,
+            SKColorType.Rgba8888,
+            SKAlphaType.Unpremul);
+
+        return SKBitmap.FromImage(
+            SKImage.FromPixels(
+                iconProperties,
+                buffer.Pixels));
     }
 }
